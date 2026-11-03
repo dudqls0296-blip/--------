@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>언론부 3D 매거진</title>
+<meta name="description" content="인덕대학교 총학생회 언론부 3D 인터랙티브 매거진">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;900&family=Playfair+Display:ital,wght@1,400;1,500&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { serif: ['"Noto Serif KR"', 'serif'], sans: ['"Noto Sans KR"', 'system-ui', 'sans-serif'], brush: ['"Nanum Brush Script"', 'cursive'], it: ['"Playfair Display"', 'serif'] },
+    colors: { ink: '#0B0A08', char: '#14110E', ivory: '#F3EFE6', gold: '#C6A365' } } } };
+</script>
+<style>
+  html,body{margin:0;background:#0B0A08;color:#F3EFE6;-webkit-font-smoothing:antialiased;word-break:keep-all}
+  ::selection{background:#C6A365;color:#0B0A08}
+  body::-webkit-scrollbar{width:0}
+  .grain{position:fixed;inset:-50%;pointer-events:none;z-index:40;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");animation:grain 1s steps(5) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}}
+  .glass{background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(243,239,230,.12);box-shadow:0 30px 60px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06)}
+  #boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#0B0A08;transition:opacity 1s ease}
+  #boot p{font-family:"Noto Serif KR",serif;letter-spacing:.5em;font-size:13px;color:rgba(243,239,230,.6)}
+  #boot i{display:block;width:120px;height:1px;margin:18px auto 0;background:linear-gradient(90deg,transparent,#C6A365,transparent);animation:bar 1.6s ease-in-out infinite}
+  @keyframes bar{0%,100%{opacity:.2;transform:scaleX(.3)}50%{opacity:1;transform:scaleX(1)}}
+  @media (prefers-reduced-motion:reduce){.grain{animation:none}}
+</style>
+
+<!-- One copy of each library: drei pulls several three/react/fiber versions internally; these entries fold them into one. -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+    "react/jsx-runtime": "https://cdn.jsdelivr.net/npm/react@18.3.1/jsx-runtime/+esm",
+    "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/+esm",
+    "react-dom/client": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/client/+esm",
+    "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "@react-three/fiber": "https://cdn.jsdelivr.net/npm/@react-three/fiber@8.17.8/+esm",
+    "@react-three/drei": "https://cdn.jsdelivr.net/npm/@react-three/drei@9.114.0/+esm",
+    "framer-motion": "https://cdn.jsdelivr.net/npm/framer-motion@11.11.17/+esm",
+
+    "https://cdn.jsdelivr.net/npm/react@17.0.2/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+    "https://cdn.jsdelivr.net/npm/react@18.0.0/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+    "https://cdn.jsdelivr.net/npm/react@18.1.0/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+    "https://cdn.jsdelivr.net/npm/react@18.2.0/+esm": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.146.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.147.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.157.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.163.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.165.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.166.1/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm": "https://cdn.jsdelivr.net/npm/three@0.168.0/+esm",
+    "https://cdn.jsdelivr.net/npm/@react-three/fiber@8.9.1/+esm": "https://cdn.jsdelivr.net/npm/@react-three/fiber@8.17.8/+esm"
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="js/config.js" onerror="this.remove()"></script>
+</head>
+<body>
+<!--BODY-START-->
+<div id="boot"><div><p>언론부 PRESS</p><i></i></div></div>
+<div id="root"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<script type="text/babel" data-type="module" data-presets="react">
+import React, { useRef, useMemo, useState, useEffect, Suspense, Component } from "react";
+import { createRoot } from "react-dom/client";
+import * as THREE from "three";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Environment, Lightformer, Float, useGLTF } from "@react-three/drei";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+
+/* =====================================================================
+   0. CONFIG — 교체용 설정 (3D 모델 · 갤러리 · SNS)
+   ===================================================================== */
+const CONFIG = {
+  // 3D 모델러가 만든 .glb/.gltf 경로를 넣으면 임시 도형 대신 자동으로 로드됩니다.
+  models: {
+    pen:  { url: null, scale: 1, rotation: [0, 0, 0] },   // 예: "models/pen.glb"
+    lens: { url: null, scale: 1, rotation: [0, 0, 0] }    // 예: "models/lens.glb"
+  },
+  gallery: [
+    { src: "../images/pr-stage-lights.jpg",  title: "대동제, 무대 위의 밤",   tag: "Festival" },
+    { src: "../images/pr-concert.jpg",       title: "객석의 함성",           tag: "Performance" },
+    { src: "../images/pr-track.jpg",         title: "체육대회 결승선",       tag: "Sports Day" },
+    { src: "../images/pr-graduation.jpg",    title: "졸업, 던져 올린 순간",  tag: "Ceremony" },
+    { src: "../images/pr-shoot-1.jpg",       title: "현장의 언론부",         tag: "On Assignment" },
+    { src: "../images/pr-prints-basket.jpg", title: "한 해의 아카이브",      tag: "Archive" }
+  ],
+  roles: [
+    { no: "01", ko: "취재", en: "Reporting", lead: "기록은 현장에서 시작됩니다.",
+      body: "축제와 교내 행사, 총학생회 사업의 현장에 가장 먼저 도착하고 가장 늦게 떠납니다. 보고 들은 것을 사실에 근거한 기사로 정리해 학우들에게 전합니다." },
+    { no: "02", ko: "디자인 · 포스터", en: "Design", lead: "소식을 가장 아름답게 전하는 방법.",
+      body: "카드뉴스와 포스터, 연말 잡지의 지면까지. 학우들에게 닿는 모든 소식을 한눈에 읽히는 디자인으로 완성합니다." },
+    { no: "03", ko: "영상 · 미디어", en: "Media", lead: "움직이는 기록, 오래 남는 장면.",
+      body: "사진과 영상으로 학교의 순간을 담습니다. 행사 하이라이트와 인터뷰, 숏폼 콘텐츠로 학우들과 소통합니다." }
+  ],
+  sns: [
+    { label: "Instagram", value: "@induk_press", href: "https://www.instagram.com/" },
+    { label: "YouTube",   value: "인덕대 언론부", href: "https://www.youtube.com/" },
+    { label: "E-mail",    value: "press@induk.ac.kr", href: null }
+  ],
+  presenter: "김영빈", role: "총학생회 언론부장", year: "2026"
+};
+/* js/config.js 의 window.PRESS_CONFIG 가 있으면 발표자·연도를 거기서 가져옵니다 */
+const PC = window.PRESS_CONFIG || {};
+if (PC.presenter) CONFIG.presenter = PC.presenter;
+if (PC.presenterRole || PC.role) CONFIG.role = PC.presenterRole || PC.role;
+if (PC.year) CONFIG.year = String(PC.year);
+
+/* scroll → 3D 공유 상태 (DOM 레이어와 Canvas 레이어를 잇는 유일한 통로) */
+const store = { p: 0, focus: -1 };
+const SECTIONS = ["Hero", "Editor's Note", "Gallery", "Epilogue"];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const smooth = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+const range = (p, a, b) => clamp((p - a) / (b - a));
+
+/* =====================================================================
+   1. 텍스처 유틸 (캔버스로 그리는 한글 타이포 · 종이 · 각인)
+   ===================================================================== */
+function canvasTex(w, h, draw) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  draw(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return t;
+}
+function wrapLines(ctx, text, maxW) {
+  const out = []; let line = "";
+  for (const ch of text) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxW && line) { out.push(line); line = ch === " " ? "" : ch; }
+    else line = test;
+  }
+  if (line) out.push(line);
+  return out;
+}
+function paperBase(ctx, w, h, seed) {
+  ctx.fillStyle = "#E8DDC6"; ctx.fillRect(0, 0, w, h);
+  const img = ctx.getImageData(0, 0, w, h), d = img.data; let s = seed * 9973;
+  const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < d.length; i += 4) { const n = (rnd() - .5) * 16; d[i] += n; d[i + 1] += n; d[i + 2] += n * .9; }
+  ctx.putImageData(img, 0, 0);
+  ctx.globalAlpha = .05; ctx.strokeStyle = "#6b5236";
+  for (let i = 0; i < 260; i++) { ctx.beginPath(); const x = rnd() * w, y = rnd() * h; ctx.moveTo(x, y); ctx.lineTo(x + (rnd() - .5) * 40, y + (rnd() - .5) * 12); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+  const g = ctx.createRadialGradient(w / 2, h / 2, h * .25, w / 2, h / 2, h * .78);
+  g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(110,72,30,.28)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+}
+function makeRolePaper(r, i) {
+  return canvasTex(1024, 1420, (ctx, w, h) => {
+    paperBase(ctx, w, h, i + 3);
+    const M = 92, ink = "#1E1813";
+    ctx.fillStyle = ink; ctx.font = '500 26px "Noto Sans KR"'; ctx.textBaseline = "alphabetic";
+    ctx.fillText("EDITOR'S NOTE", M, 120);
+    ctx.textAlign = "right"; ctx.fillText(`ROLE ${r.no} / 03`, w - M, 120); ctx.textAlign = "left";
+    ctx.fillRect(M, 146, w - M * 2, 3); ctx.fillRect(M, 156, w - M * 2, 1);
+    ctx.fillStyle = "#8A6A34"; ctx.font = 'italic 400 210px "Playfair Display"'; ctx.fillText(r.no, M - 8, 400);
+    ctx.fillStyle = ink; ctx.font = '900 104px "Noto Serif KR"';
+    const tl = wrapLines(ctx, r.ko, w - M * 2); tl.forEach((t, k) => ctx.fillText(t, M, 545 + k * 118));
+    let y = 545 + (tl.length - 1) * 118 + 62;
+    ctx.font = 'italic 400 40px "Playfair Display"'; ctx.fillStyle = "#6B5134"; ctx.fillText(r.en, M, y); y += 46;
+    ctx.fillStyle = ink; ctx.fillRect(M, y, 120, 3); y += 74;
+    ctx.font = '600 52px "Noto Serif KR"'; wrapLines(ctx, r.lead, w - M * 2).forEach((t) => { ctx.fillText(t, M, y); y += 72; });
+    y += 30; ctx.font = '400 40px "Noto Sans KR"'; ctx.fillStyle = "#3A2F25";
+    wrapLines(ctx, r.body, w - M * 2).forEach((t) => { ctx.fillText(t, M, y); y += 70; });
+    ctx.fillStyle = ink; ctx.fillRect(M, h - 130, w - M * 2, 1);
+    ctx.font = '500 24px "Noto Sans KR"'; ctx.fillText("인덕대학교 총학생회 언론부", M, h - 88);
+    ctx.textAlign = "right"; ctx.fillText("PRESS MAGAZINE · 2026", w - M, h - 88);
+  });
+}
+function makeTitleTex() {
+  return canvasTex(2048, 1024, (ctx, w, h) => {
+    ctx.textAlign = "center"; ctx.fillStyle = "#C6A365"; ctx.font = '500 40px "Noto Serif KR"';
+    ctx.fillText("인 덕 대 학 교   총 학 생 회   언 론 부", w / 2, 150);
+    ctx.fillStyle = "#F3EFE6"; ctx.font = '900 250px "Noto Serif KR"';
+    ctx.fillText("우리의 시선,", w / 2, 470);
+    ctx.font = '900 250px "Noto Serif KR"'; ctx.fillText("너의 기록", w / 2, 760);
+    ctx.fillStyle = "#C6A365"; ctx.fillRect(w / 2 - 60, 850, 120, 3);
+  });
+}
+function makeEngraving() {
+  return canvasTex(1024, 1024, (ctx, w, h) => {
+    ctx.fillStyle = "#0d0d0f"; ctx.fillRect(0, 0, w, h);
+    ctx.translate(w / 2, h / 2); ctx.fillStyle = "#E9E2D2"; ctx.font = '500 34px "Noto Sans KR"';
+    const txt = "PRESS · INDUK UNIVERSITY · 50mm 1:1.4 · STUDENT COUNCIL · ∞ · ";
+    const R = 410; let a = -Math.PI / 2;
+    for (const ch of txt) { const cw = ctx.measureText(ch).width; ctx.save(); ctx.rotate(a); ctx.translate(0, -R); ctx.fillText(ch, -cw / 2, 0); ctx.restore(); a += (cw + 3) / R; }
+    ctx.strokeStyle = "rgba(198,163,101,.8)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, 360, 0, 6.283); ctx.stroke();
+  });
+}
+function fallbackPrint(g, i) {
+  return canvasTex(1200, 800, (ctx, w, h) => {
+    const gr = ctx.createRadialGradient(w * (.3 + .4 * ((i * 37) % 10) / 10), h * .4, 20, w / 2, h / 2, w * .75);
+    gr.addColorStop(0, "#bdb3a1"); gr.addColorStop(.45, "#4a4136"); gr.addColorStop(1, "#0e0c0a");
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
+    for (let k = 0; k < 18; k++) { ctx.globalAlpha = .08 + (k % 4) * .05; ctx.fillStyle = "#f3efe6"; ctx.beginPath(); ctx.arc((k * 173 + i * 91) % w, (k * 97 + i * 53) % h, 18 + (k * 13) % 70, 0, 6.283); ctx.fill(); }
+    ctx.globalAlpha = 1; ctx.fillStyle = "#F3EFE6"; ctx.font = '600 64px "Noto Serif KR"'; ctx.fillText(g.title, 70, h - 110);
+    ctx.font = '400 26px "Noto Sans KR"'; ctx.fillStyle = "rgba(243,239,230,.6)"; ctx.fillText(g.tag.toUpperCase() + "  ·  f/2.8 · 1/250s · ISO 400", 72, h - 60);
+  });
+}
+function makeKnurl() {
+  const t = canvasTex(256, 32, (ctx, w, h) => {
+    ctx.fillStyle = "#1a1a1d"; ctx.fillRect(0, 0, w, h);
+    for (let x = 0; x < w; x += 4) { ctx.fillStyle = x % 8 ? "#0c0c0e" : "#2b2b30"; ctx.fillRect(x, 0, 2, h); }
+  });
+  t.wrapS = THREE.RepeatWrapping; t.repeat.set(10, 1);
+  return t;
+}
+
+/* =====================================================================
+   2. 3D 모델 — 임시 도형(Procedural)과 GLB 로더를 분리
+   ===================================================================== */
+class Boundary extends Component {
+  constructor(p) { super(p); this.state = { err: false }; }
+  static getDerivedStateFromError() { return { err: true }; }
+  render() { return this.state.err ? this.props.fallback : this.props.children; }
+}
+function GLTFModel({ url, scale = 1, rotation = [0, 0, 0] }) {
+  const { scene } = useGLTF(url);
+  const clone = useMemo(() => scene.clone(true), [scene]);
+  return <primitive object={clone} scale={scale} rotation={rotation} />;
+}
+/** <ModelSlot name="pen"> — CONFIG.models[name].url 이 있으면 GLB, 없거나 실패하면 임시 도형 */
+function ModelSlot({ name, children }) {
+  const m = CONFIG.models[name];
+  if (!m || !m.url) return children;
+  return <Boundary fallback={children}><Suspense fallback={children}><GLTFModel {...m} /></Suspense></Boundary>;
+}
+
+const MAT = {
+  lacquer: () => new THREE.MeshPhysicalMaterial({ color: "#0c0c0e", roughness: .16, metalness: .25, clearcoat: 1, clearcoatRoughness: .04 }),
+  gold: () => new THREE.MeshPhysicalMaterial({ color: "#D8B06A", roughness: .22, metalness: 1, clearcoat: .6 }),
+  chrome: () => new THREE.MeshStandardMaterial({ color: "#d9d9de", roughness: .08, metalness: 1 }),
+  anodized: () => new THREE.MeshStandardMaterial({ color: "#121215", roughness: .42, metalness: .7 }),
+  black: () => new THREE.MeshStandardMaterial({ color: "#050505", roughness: .9, metalness: 0 })
+};
+
+function ProceduralPen() {
+  const m = useMemo(() => ({ lac: MAT.lacquer(), gold: MAT.gold(), black: MAT.black() }), []);
+  return (
+    <group>
+      {/* nib: tapered partial cone reads as a curved two-tone nib */}
+      <mesh material={m.gold} position={[0, -1.36, 0]} rotation={[0, Math.PI, 0]}>
+        <cylinderGeometry args={[.105, .004, .52, 48, 1, true, -1.05, 2.1]} />
+      </mesh>
+      <mesh material={m.black} position={[0, -1.3, .085]} rotation={[.12, 0, 0]}><boxGeometry args={[.006, .36, .006]} /></mesh>
+      <mesh material={m.black} position={[0, -1.17, .095]} rotation={[Math.PI / 2 - .1, 0, 0]}><cylinderGeometry args={[.016, .016, .01, 24]} /></mesh>
+      <mesh material={m.lac} position={[0, -.93, 0]}><cylinderGeometry args={[.13, .1, .42, 64]} /></mesh>
+      <mesh material={m.gold} position={[0, -.7, 0]}><cylinderGeometry args={[.142, .142, .045, 64]} /></mesh>
+      <mesh material={m.lac} position={[0, -.05, 0]}><cylinderGeometry args={[.158, .146, 1.26, 64]} /></mesh>
+      <mesh material={m.gold} position={[0, .6, 0]}><cylinderGeometry args={[.168, .168, .07, 64]} /></mesh>
+      <mesh material={m.gold} position={[0, .67, 0]}><cylinderGeometry args={[.162, .162, .02, 64]} /></mesh>
+      <mesh material={m.lac} position={[0, 1.08, 0]}><cylinderGeometry args={[.152, .162, .78, 64]} /></mesh>
+      <mesh material={m.lac} position={[0, 1.47, 0]}><sphereGeometry args={[.152, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2]} /></mesh>
+      <mesh material={m.gold} position={[0, 1.47, 0]}><cylinderGeometry args={[.154, .154, .02, 64]} /></mesh>
+      {/* clip */}
+      <mesh material={m.gold} position={[.168, 1.06, 0]}><boxGeometry args={[.03, .78, .07]} /></mesh>
+      <mesh material={m.gold} position={[.19, .7, 0]}><sphereGeometry args={[.045, 24, 16]} /></mesh>
+      <mesh material={m.gold} position={[.16, 1.44, 0]} rotation={[0, 0, -.5]}><boxGeometry args={[.03, .08, .07]} /></mesh>
+    </group>
+  );
+}
+
+function ProceduralLens() {
+  const tex = useMemo(() => ({ engr: makeEngraving(), knurl: makeKnurl() }), []);
+  const m = useMemo(() => ({
+    ano: MAT.anodized(), chrome: MAT.chrome(), gold: MAT.gold(), black: MAT.black(),
+    knurl: new THREE.MeshStandardMaterial({ map: tex.knurl, roughness: .55, metalness: .6 }),
+    engr: new THREE.MeshStandardMaterial({ map: tex.engr, roughness: .5, metalness: .3 }),
+    inner: new THREE.MeshStandardMaterial({ color: "#020203", roughness: 1, side: THREE.BackSide }),
+    glass: new THREE.MeshPhysicalMaterial({ color: "#d7e2ff", roughness: 0, metalness: 0, transmission: 1, thickness: 1.2, ior: 1.62,
+      iridescence: .3, iridescenceIOR: 1.35, iridescenceThicknessRange: [180, 620], clearcoat: 1, clearcoatRoughness: 0, envMapIntensity: 2.2, transparent: true }),
+    coat: new THREE.MeshPhysicalMaterial({ color: "#0b0f18", roughness: .05, metalness: .2, iridescence: .45, iridescenceIOR: 1.5, iridescenceThicknessRange: [300, 900], clearcoat: 1 })
+  }), [tex]);
+  const X = [Math.PI / 2, 0, 0];
+  return (
+    <group>
+      <mesh material={m.chrome} rotation={X} position={[0, 0, -.82]}><cylinderGeometry args={[.86, .9, .22, 96]} /></mesh>
+      <mesh material={m.ano} rotation={X} position={[0, 0, -.32]}><cylinderGeometry args={[.98, .9, .8, 96]} /></mesh>
+      <mesh material={m.knurl} rotation={X} position={[0, 0, .02]}><cylinderGeometry args={[1.02, 1.02, .42, 128, 1, true]} /></mesh>
+      <mesh material={m.ano} rotation={X} position={[0, 0, .3]}><cylinderGeometry args={[1.0, 1.02, .16, 96]} /></mesh>
+      <mesh material={m.gold} position={[0, 0, .39]}><torusGeometry args={[1.0, .008, 12, 160]} /></mesh>
+      <mesh material={m.ano} rotation={X} position={[0, 0, .48]}><cylinderGeometry args={[.97, 1.0, .18, 96]} /></mesh>
+      <mesh material={m.chrome} position={[0, 0, .57]}><torusGeometry args={[.9, .035, 24, 160]} /></mesh>
+      <mesh material={m.engr} position={[0, 0, .575]}><ringGeometry args={[.6, .88, 128]} /></mesh>
+      <mesh material={m.inner} rotation={X} position={[0, 0, .2]}><cylinderGeometry args={[.6, .55, .8, 64, 1, true]} /></mesh>
+      {/* iris blades seen through the glass */}
+      {Array.from({ length: 8 }).map((_, i) => (
+        <mesh key={i} material={m.ano} position={[0, 0, -.05]} rotation={[0, 0, (i / 8) * Math.PI * 2]}>
+          <boxGeometry args={[.5, .03, .01]} />
+        </mesh>
+      ))}
+      <mesh material={m.coat} position={[0, 0, -.02]}><circleGeometry args={[.52, 64]} /></mesh>
+      <mesh material={m.glass} rotation={X} position={[0, 0, -.2]}><sphereGeometry args={[.95, 96, 48, 0, Math.PI * 2, 0, .69]} /></mesh>
+    </group>
+  );
+}
+
+/* =====================================================================
+   3. 씬 구성 요소
+   ===================================================================== */
+function CameraRig() {
+  const { camera, pointer } = useThree();
+  const look = useRef(new THREE.Vector3()), sp = useRef(0);
+  const K = useMemo(() => [
+    { p: 0,     pos: new THREE.Vector3(0, .15, 7.2),  at: new THREE.Vector3(0, 0, 0) },
+    { p: 1 / 3, pos: new THREE.Vector3(0, 0, -1.5),   at: new THREE.Vector3(0, -.1, -8) },
+    { p: 2 / 3, pos: new THREE.Vector3(.7, .55, -7.6), at: new THREE.Vector3(1.3, -.1, -16) },
+    { p: 1,     pos: new THREE.Vector3(0, .1, -18.6), at: new THREE.Vector3(0, 0, -24) }
+  ], []);
+  const P = new THREE.Vector3(), A = new THREE.Vector3();
+  useFrame((state, dt) => {
+    sp.current += (store.p - sp.current) * Math.min(1, dt * 3.2);
+    const p = sp.current;
+    let i = 0; while (i < K.length - 2 && p > K[i + 1].p) i++;
+    const a = K[i], b = K[i + 1], t = smooth(clamp((p - a.p) / (b.p - a.p)));
+    P.lerpVectors(a.pos, b.pos, t); A.lerpVectors(a.at, b.at, t);
+    const swim = Math.sin(t * Math.PI) * (i % 2 ? -1 : 1);       // curved path between spreads
+    P.x += swim * 1.1; P.y += Math.sin(t * Math.PI) * .35;
+    P.x += pointer.x * .32; P.y += pointer.y * .2;               // parallax
+    camera.position.lerp(P, 1 - Math.pow(.0015, dt));
+    look.current.lerp(A, 1 - Math.pow(.002, dt));
+    camera.lookAt(look.current);
+  });
+  return null;
+}
+
+function KeyLights() {
+  const g = useRef();
+  useFrame(({ camera }) => { g.current.position.copy(camera.position); g.current.quaternion.copy(camera.quaternion); });
+  return (
+    <group ref={g}>
+      <spotLight position={[-4, 5, 2]} angle={.5} penumbra={.9} intensity={110} color="#ffd9a6" distance={30} decay={1.6} />
+      <pointLight position={[3.5, -1.5, -1]} intensity={14} color="#8fb4ff" distance={14} />
+    </group>
+  );
+}
+
+function Hero() {
+  const root = useRef(), lens = useRef(), pen = useRef(), title = useRef();
+  const titleTex = useMemo(() => makeTitleTex(), []);
+  useFrame(({ clock, pointer, viewport }, dt) => {
+    root.current.scale.setScalar(Math.min(1, viewport.aspect / 1.75));   // keep the composition on narrow screens
+    const t = clock.elapsedTime, intro = smooth(clamp((t - .4) / 2.6));
+    lens.current.rotation.y = -.62 + Math.sin(t * .25) * .35 + pointer.x * .15;
+    lens.current.rotation.x = .12 + Math.sin(t * .2) * .06 - pointer.y * .1;
+    lens.current.position.z = -2 + intro * 2;
+    pen.current.rotation.y = t * .35;
+    pen.current.position.z = -3 + intro * 3.5;
+    title.current.material.opacity = intro * (1 - range(store.p, .08, .22));
+    title.current.position.z = -2.6 - (1 - intro) * 2;
+  });
+  return (
+    <group ref={root}>
+      <mesh ref={title} position={[-.2, .3, -2.6]}>
+        <planeGeometry args={[8.2, 4.1]} />
+        <meshBasicMaterial map={titleTex} transparent opacity={0} toneMapped={false} depthWrite={false} />
+      </mesh>
+      <Float speed={1.2} rotationIntensity={.15} floatIntensity={.4}>
+        <group ref={lens} position={[3.05, -.35, 0]} scale={1}>
+          <ModelSlot name="lens"><ProceduralLens /></ModelSlot>
+        </group>
+      </Float>
+      <Float speed={1.6} rotationIntensity={.2} floatIntensity={.6}>
+        <group position={[-3.0, .25, .5]} rotation={[0, 0, -.62]}>
+          <group ref={pen} scale={1.05}><ModelSlot name="pen"><ProceduralPen /></ModelSlot></group>
+        </group>
+      </Float>
+    </group>
+  );
+}
+
+function bendPlane(w, h) {
+  const g = new THREE.PlaneGeometry(w, h, 24, 32), p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i); p.setZ(i, -.06 * (x / (w / 2)) ** 2 + .02 * Math.sin(y * 2.2)); }
+  g.computeVertexNormals(); return g;
+}
+function Papers() {
+  const tex = useMemo(() => CONFIG.roles.map(makeRolePaper), []);
+  const geo = useMemo(() => bendPlane(1.82, 2.52), []);
+  const refs = useRef([]);
+  const target = [[-2.05, -.25, -8.1, .06], [0, -.2, -7.95, 0], [2.05, -.25, -8.1, -.06]];
+  const start = [[-7, 3.5, -22, 2.4], [1.5, -5, -26, -2.1], [7.5, 2.5, -20, 2.8]];
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    refs.current.forEach((m, i) => {
+      if (!m) return;
+      const k = smooth(range(store.p, .1 + i * .05, .31 + i * .02)), s = start[i], e = target[i];
+      const ctrl = [(s[0] + e[0]) / 2 + (i - 1) * 3, (s[1] + e[1]) / 2 + 2.5, (s[2] + e[2]) / 2];
+      const q = (a, c, b) => (1 - k) * (1 - k) * a + 2 * (1 - k) * k * c + k * k * b;     // quadratic bezier flight
+      m.position.set(q(s[0], ctrl[0], e[0]), q(s[1], ctrl[1], e[1]) + Math.sin(t * .8 + i) * .04, q(s[2], ctrl[2], e[2]));
+      const flutter = (1 - k) * 1.2;
+      m.rotation.set(Math.sin(t * 1.3 + i) * flutter * .5 + (1 - k) * 1.1, e[3] + (1 - k) * s[3] + Math.sin(t * .9 + i) * flutter * .3, (1 - k) * (i - 1) * .9);
+      m.material.opacity = clamp(k * 1.6) * (1 - range(store.p, .43, .53));   // fade before the camera passes through
+      m.visible = m.material.opacity > .005;
+    });
+  });
+  return tex.map((t, i) => (
+    <mesh key={i} ref={(el) => (refs.current[i] = el)} geometry={geo} castShadow>
+      <meshStandardMaterial map={t} roughness={.92} metalness={0} side={THREE.DoubleSide} transparent opacity={0} />
+    </mesh>
+  ));
+}
+
+function DriftingPaper() {
+  const N = 70, ref = useRef();
+  const data = useMemo(() => Array.from({ length: N }, () => ({
+    p: new THREE.Vector3((Math.random() - .5) * 13, (Math.random() - .5) * 7, 4 - Math.random() * 32),
+    r: new THREE.Euler(Math.random() * 6, Math.random() * 6, Math.random() * 6), s: .5 + Math.random() * .9, v: .2 + Math.random() * .5 })), []);
+  const o = useMemo(() => new THREE.Object3D(), []);
+  useFrame(({ clock }, dt) => {
+    const t = clock.elapsedTime;
+    data.forEach((d, i) => {
+      d.p.y -= dt * .08 * d.v; if (d.p.y < -3.8) d.p.y = 3.8;
+      o.position.set(d.p.x + Math.sin(t * .3 + i) * .3, d.p.y, d.p.z);
+      o.rotation.set(d.r.x + t * .3 * d.v, d.r.y + t * .2, d.r.z + Math.sin(t * .5 + i) * .4);
+      o.scale.setScalar(d.s); o.updateMatrix(); ref.current.setMatrixAt(i, o.matrix);
+    });
+    ref.current.instanceMatrix.needsUpdate = true;
+  });
+  return (
+    <instancedMesh ref={ref} args={[null, null, N]}>
+      <planeGeometry args={[.16, .22]} />
+      <meshStandardMaterial color="#E7DCC4" roughness={.95} side={THREE.DoubleSide} />
+    </instancedMesh>
+  );
+}
+
+function Carousel({ onPick, hover, setHover }) {
+  const group = useRef(), cards = useRef([]);
+  const tex = useMemo(() => {
+    const L = new THREE.TextureLoader();
+    return CONFIG.gallery.map((g, i) => {
+      const t = L.load(g.src, undefined, undefined, () => {        // file:// 또는 사진 누락 → 절차적 인화지 텍스처
+        t.image = fallbackPrint(g, i).image; t.needsUpdate = true;
+      });
+      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+    });
+  }, []);
+  const n = CONFIG.gallery.length, R = 2.75;
+  const W = new THREE.Vector3(), Q = new THREE.Quaternion(), F = new THREE.Vector3();
+  useFrame(({ clock, camera }, dt) => {
+    const t = clock.elapsedTime, vis = range(store.p, .45, .62);
+    if (store.focus < 0) group.current.rotation.y += ((store.p * Math.PI * 2.2 + t * .05) - group.current.rotation.y) * Math.min(1, dt * 2);
+    group.current.position.y = (1 - vis) * -3;
+    cards.current.forEach((c, i) => {
+      if (!c) return;
+      const f = store.focus === i, inner = c.children[0];
+      if (f) {
+        camera.getWorldDirection(F); W.copy(camera.position).addScaledVector(F, 3);
+        c.parent.worldToLocal(W); inner.position.lerp(W.sub(c.position).applyQuaternion(Q.copy(c.quaternion).invert()), 1 - Math.pow(.0008, dt));
+        const wq = camera.quaternion.clone(); const pq = new THREE.Quaternion(); c.getWorldQuaternion(pq);
+        inner.quaternion.slerp(pq.invert().multiply(wq), 1 - Math.pow(.0008, dt));
+      } else {
+        inner.position.lerp(new THREE.Vector3(0, hover === i ? .08 : 0, 0), 1 - Math.pow(.002, dt));
+        inner.quaternion.slerp(new THREE.Quaternion(), 1 - Math.pow(.002, dt));
+      }
+      const dim = store.focus >= 0 && !f ? .18 : 1;
+      inner.children.forEach((m) => { m.material.opacity += (vis * dim - m.material.opacity) * Math.min(1, dt * 5); });
+    });
+  });
+  return (
+    <group ref={group} position={[1.3, 0, -16]}>
+      {CONFIG.gallery.map((g, i) => {
+        const a = (i / n) * Math.PI * 2;
+        return (
+          <group key={i} ref={(el) => (cards.current[i] = el)} position={[Math.sin(a) * R, 0, Math.cos(a) * R]} rotation={[0, a, 0]}>
+            <group>
+              <mesh position={[0, 0, -.01]}><planeGeometry args={[1.86, 1.36]} /><meshStandardMaterial color="#EFE6D3" roughness={.9} transparent opacity={0} /></mesh>
+              <mesh onClick={(e) => { e.stopPropagation(); onPick(i); }} onPointerOver={(e) => { e.stopPropagation(); setHover(i); document.body.style.cursor = "pointer"; }}
+                onPointerOut={() => { setHover(-1); document.body.style.cursor = ""; }}>
+                <planeGeometry args={[1.72, 1.15]} />
+                <meshBasicMaterial map={tex[i]} toneMapped={false} transparent opacity={0} />
+              </mesh>
+            </group>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+function EpiloguePen() {
+  const g = useRef();
+  useFrame(({ clock }) => {
+    const v = smooth(range(store.p, .82, 1)), t = clock.elapsedTime;
+    g.current.scale.setScalar(smooth(range(store.p, .7, .86)) + 1e-4);
+    g.current.position.set(2.6 - v * .6, -.15 + Math.sin(t * .7) * .05, -24.5 + v * 1.2);
+    g.current.rotation.set(.35, t * .15, -.95 + v * .25);
+  });
+  return <group ref={g}><ModelSlot name="pen"><ProceduralPen /></ModelSlot></group>;
+}
+
+function Scene({ onPick, hover, setHover }) {
+  return (
+    <>
+      <color attach="background" args={["#0B0A08"]} />
+      <fog attach="fog" args={["#0B0A08", 7, 24]} />
+      <ambientLight intensity={.12} />
+      <directionalLight position={[5, 6, 4]} intensity={1.1} color="#ffe2b8" />
+      <directionalLight position={[-6, 2, -6]} intensity={1.6} color="#7f9cff" />
+      <KeyLights />
+      <Environment resolution={256} frames={1}>
+        <Lightformer form="rect" intensity={3.2} color="#fff1dc" position={[0, 5, -2]} rotation-x={Math.PI / 2} scale={[12, 2, 1]} />
+        <Lightformer form="rect" intensity={2.2} color="#ffd8a8" position={[-6, 1, 1]} rotation-y={Math.PI / 2} scale={[6, 3, 1]} />
+        <Lightformer form="rect" intensity={1.6} color="#9fb8ff" position={[6, 0, -1]} rotation-y={-Math.PI / 2} scale={[4, 6, 1]} />
+        <Lightformer form="ring" intensity={4} color="#ffffff" position={[0, 0, 6]} scale={2.4} />
+      </Environment>
+      <CameraRig />
+      <Hero />
+      <Papers />
+      <DriftingPaper />
+      <Carousel onPick={onPick} hover={hover} setHover={setHover} />
+      <EpiloguePen />
+    </>
+  );
+}
+
+/* =====================================================================
+   4. DOM 레이어 (z-index 10 이상) — 글래스 패널 · 내비게이션 · 라이트박스
+   ===================================================================== */
+const ease = [.16, 1, .3, 1];
+const Reveal = ({ children, delay = 0, className = "" }) => (
+  <motion.div className={className} initial={{ opacity: 0, y: 40, filter: "blur(10px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+    viewport={{ amount: .5 }} transition={{ duration: 1.2, ease, delay }}>{children}</motion.div>
+);
+const Kicker = ({ n, children }) => (
+  <p className="flex items-center gap-4 font-sans text-[11px] tracking-[.35em] text-gold uppercase"><span className="font-it normal-case tracking-normal text-lg">{n}</span>{children}<span className="h-px w-12 bg-gold/60" /></p>
+);
+
+function Signature() {
+  return (
+    <svg viewBox="0 0 900 220" className="w-[min(70vw,760px)] h-auto overflow-visible" aria-label="총학생회 언론부">
+      <motion.text x="450" y="160" textAnchor="middle" className="font-brush" style={{ fontSize: 170 }}
+        fill="#F3EFE6" stroke="#F3EFE6" strokeWidth="1.2" strokeDasharray="1600"
+        initial={{ strokeDashoffset: 1600, fillOpacity: 0 }} whileInView={{ strokeDashoffset: 0, fillOpacity: 1 }}
+        viewport={{ amount: .6 }} transition={{ strokeDashoffset: { duration: 3.2, ease: "easeInOut" }, fillOpacity: { duration: 1.4, delay: 2.4 } }}>
+        총학생회 언론부
+      </motion.text>
+      <motion.path d="M150 196 C 320 176, 560 214, 760 186" fill="none" stroke="#C6A365" strokeWidth="2.2" strokeLinecap="round"
+        initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ amount: .6 }} transition={{ duration: 1.4, delay: 3.1, ease: "easeInOut" }} />
+    </svg>
+  );
+}
+
+function App() {
+  const { scrollYProgress } = useScroll();
+  const [sec, setSec] = useState(0), [p, setP] = useState(0);
+  const [focus, setFocus] = useState(-1), [hover, setHover] = useState(-1);
+  useMotionValueEvent(scrollYProgress, "change", (v) => { store.p = v; setP(v); setSec(Math.min(3, Math.round(v * 3))); });
+  useEffect(() => { store.focus = focus; }, [focus]);
+  useEffect(() => {
+    const boot = document.getElementById("boot"); if (boot) { boot.style.opacity = 0; setTimeout(() => boot.remove(), 1000); }
+    const jump = (i) => window.scrollTo({ top: i * (document.documentElement.scrollHeight - innerHeight) / 3, behavior: "smooth" });
+    const go = (d) => jump(clamp(Math.round(scrollYProgress.get() * 3) + d, 0, 3));
+    const key = (e) => {
+      if (focus >= 0) { if (["Escape", " ", "Enter"].includes(e.key)) { e.preventDefault(); setFocus(-1); } if (e.key === "ArrowRight") setFocus((f) => (f + 1) % CONFIG.gallery.length); if (e.key === "ArrowLeft") setFocus((f) => (f + CONFIG.gallery.length - 1) % CONFIG.gallery.length); return; }
+      if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); go(1); }
+      if (["ArrowUp", "ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); go(-1); }
+      if (/^[1-4]$/.test(e.key)) jump(+e.key - 1);
+      if (e.key === "f" || e.key === "F") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen?.().catch(() => {}); }
+    };
+    addEventListener("keydown", key); return () => removeEventListener("keydown", key);
+  }, [focus]);
+  const g = CONFIG.gallery[focus];
+
+  return (
+    <>
+      {/* ---- 3D Canvas layer: z-0 ---- */}
+      <div className="fixed inset-0 z-0 transition-[filter] duration-700" style={{ filter: focus >= 0 ? "blur(7px) brightness(.55)" : "none" }}>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, .15, 7.2], fov: 38, near: .1, far: 60 }}
+          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}>
+          <Suspense fallback={null}><Scene onPick={setFocus} hover={hover} setHover={setHover} /></Suspense>
+        </Canvas>
+      </div>
+      <div className="pointer-events-none fixed inset-0 z-[5]" style={{ background: "radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.65))" }} />
+
+      {/* ---- HUD: z-30 ---- */}
+      <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-6 md:px-12 py-6 pointer-events-none">
+        <p className="pointer-events-auto font-serif text-[15px] tracking-[.18em]">언론부 <span className="font-it text-gold tracking-normal">Press</span></p>
+        <nav className="pointer-events-auto hidden md:flex gap-8 font-sans text-[11px] tracking-[.28em] uppercase">
+          {SECTIONS.map((s, i) => (
+            <button key={s} onClick={() => window.scrollTo({ top: i * (document.documentElement.scrollHeight - innerHeight) / 3, behavior: "smooth" })}
+              className={"transition-colors " + (sec === i ? "text-ivory" : "text-ivory/40 hover:text-ivory/80")}>
+              <span className="font-it normal-case tracking-normal mr-2 text-gold">0{i + 1}</span>{s}
+            </button>
+          ))}
+        </nav>
+      </header>
+      <div className="fixed left-0 right-0 bottom-0 z-30 h-px bg-ivory/10"><div className="h-full bg-gold" style={{ width: p * 100 + "%" }} /></div>
+      <p className="fixed bottom-6 left-6 md:left-12 z-30 font-it text-ivory/50 text-sm">0{sec + 1} <span className="text-ivory/25">/ 04</span></p>
+
+      {/* ---- Content layer: z-10 (scroll drives the camera) ---- */}
+      <main className="relative z-10 pointer-events-none [&_.glass]:pointer-events-auto">
+        {/* 01 HERO */}
+        <section className="h-screen relative">
+          <Reveal className="absolute left-6 md:left-12 bottom-14 md:bottom-16 max-w-sm" delay={2.4}>
+            <div className="glass rounded-sm p-6 md:p-7">
+              <Kicker n="01">The Press Room</Kicker>
+              <p className="mt-4 font-serif text-[15px] leading-relaxed text-ivory/85">인덕대학교 총학생회 언론부는 학교의 순간을 취재하고, 디자인하고, 기록합니다.</p>
+              <p className="mt-4 font-sans text-[12px] text-ivory/45">발표 · {CONFIG.role} {CONFIG.presenter}</p>
+            </div>
+          </Reveal>
+          <motion.p className="absolute right-6 md:right-12 bottom-16 font-sans text-[11px] tracking-[.3em] text-ivory/50"
+            animate={{ opacity: [.25, 1, .25] }} transition={{ duration: 2.6, repeat: Infinity }}>SCROLL ↓</motion.p>
+        </section>
+
+        {/* 02 EDITOR'S NOTE */}
+        <section className="h-screen relative">
+          <Reveal className="absolute left-6 md:left-12 top-24 max-w-md">
+            <Kicker n="02">Editor's Note</Kicker>
+            <h2 className="mt-4 font-serif font-black text-3xl md:text-[44px] leading-tight">언론부의 세 가지 역할</h2>
+          </Reveal>
+          <Reveal className="absolute right-6 md:right-12 bottom-14 max-w-xs text-right" delay={.2}>
+            <p className="font-sans text-[13px] leading-relaxed text-ivory/55">취재로 사실을 모으고, 디자인으로 읽히게 하고, 영상으로 오래 남깁니다.</p>
+          </Reveal>
+        </section>
+
+        {/* 03 GALLERY */}
+        <section className="h-screen relative">
+          <Reveal className="absolute left-6 md:left-12 top-24 max-w-sm">
+            <div className="glass rounded-sm p-6 md:p-7">
+              <Kicker n="03">Gallery</Kicker>
+              <h2 className="mt-4 font-serif font-black text-3xl md:text-4xl leading-tight">우리가 남긴<br />장면들</h2>
+              <ol className="mt-6 space-y-2 font-sans text-[13px]">
+                {CONFIG.gallery.map((it, i) => (
+                  <li key={i} className={"flex gap-3 cursor-pointer transition-colors " + (hover === i ? "text-gold" : "text-ivory/55 hover:text-ivory")}
+                    onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(-1)} onClick={() => setFocus(i)}>
+                    <span className="font-it text-gold/80">0{i + 1}</span>{it.title}
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-5 font-sans text-[11px] tracking-[.2em] text-ivory/35">사진을 클릭하면 크게 볼 수 있습니다</p>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* 04 EPILOGUE */}
+        <section className="h-screen relative flex flex-col items-center justify-center text-center px-6">
+          <Reveal><Kicker n="04">Epilogue</Kicker></Reveal>
+          <div className="mt-6"><Signature /></div>
+          <Reveal delay={.3}><p className="mt-6 font-serif text-lg md:text-xl text-ivory/80">우리의 시선, 너의 기록.</p></Reveal>
+          <Reveal delay={.5} className="mt-10 flex flex-wrap justify-center gap-3">
+            {CONFIG.sns.map((s) => {
+              const inner = (<><span className="font-sans text-[10px] tracking-[.3em] uppercase text-gold">{s.label}</span><span className="font-sans text-[14px] text-ivory/85">{s.value}</span></>);
+              return s.href
+                ? <a key={s.label} href={s.href} target="_blank" rel="noopener" className="glass rounded-sm px-5 py-3 flex flex-col items-start gap-1 hover:border-gold/60 transition-colors">{inner}</a>
+                : <div key={s.label} className="glass rounded-sm px-5 py-3 flex flex-col items-start gap-1 select-all">{inner}</div>;
+            })}
+          </Reveal>
+          <p className="absolute bottom-14 font-sans text-[11px] tracking-[.25em] text-ivory/35">인덕대학교 총학생회 언론부 · {CONFIG.year}</p>
+        </section>
+      </main>
+
+      {/* ---- Lightbox: z-50 ---- */}
+      <AnimatePresence>
+        {g && (
+          <motion.div key="lb" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: .5 }} onClick={() => setFocus(-1)}>
+            <motion.figure className="relative" initial={{ scale: .82, y: 40 }} animate={{ scale: 1, y: 0 }} exit={{ scale: .9, opacity: 0 }}
+              transition={{ duration: .9, ease }} onClick={(e) => e.stopPropagation()}>
+              <img src={g.src} alt={g.title} onError={(e) => { e.currentTarget.src = fallbackPrint(g, focus).image.toDataURL(); }} className="block w-[min(78vw,1100px)] aspect-[3/2] max-h-[68vh] object-cover bg-char shadow-[0_40px_80px_-30px_rgba(0,0,0,.9)]" />
+              <figcaption className="mt-5 flex items-baseline justify-between gap-6">
+                <span className="font-serif text-xl">{g.title}</span>
+                <span className="font-sans text-[11px] tracking-[.3em] uppercase text-gold">{g.tag} · 0{focus + 1}</span>
+              </figcaption>
+              <button onClick={() => setFocus(-1)} className="absolute -top-10 right-0 font-sans text-[11px] tracking-[.3em] text-ivory/60 hover:text-ivory">닫기 ✕</button>
+            </motion.figure>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+/* fonts must be ready before canvas textures draw Korean glyphs */
+Promise.race([Promise.all([
+  document.fonts.load('900 100px "Noto Serif KR"'), document.fonts.load('600 40px "Noto Serif KR"'),
+  document.fonts.load('400 30px "Noto Sans KR"'), document.fonts.load('italic 400 60px "Playfair Display"')
+]), new Promise((r) => setTimeout(r, 3500))]).finally(() => createRoot(document.getElementById("root")).render(<App />));
+</script>
+<script>
+  window.addEventListener("error", function (e) {
+    var b = document.getElementById("boot");
+    if (b) b.querySelector("p").textContent = "3D를 불러오지 못했습니다 — 인터넷 연결을 확인해 주세요";
+  });
+</script>
+<!--BODY-END-->
+</body>
+</html>
