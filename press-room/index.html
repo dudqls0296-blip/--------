@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>THE PRESS ROOM</title>
+<meta name="description" content="인덕대학교 총학생회 언론부 소개 인터랙티브 프레젠테이션">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@300;400;500&family=Noto+Serif+KR:wght@300;400;600;900&family=Pinyon+Script&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!--BODY-START-->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gGold" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#F3DFAE"/><stop offset=".5" stop-color="#C6A365"/><stop offset="1" stop-color="#7E602C"/></linearGradient>
+    <linearGradient id="gNib" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#F6E6BC"/><stop offset=".5" stop-color="#C6A365"/><stop offset="1" stop-color="#6E5122"/></linearGradient>
+    <radialGradient id="gWax" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#B5442F"/><stop offset=".55" stop-color="#7A2418"/><stop offset="1" stop-color="#40100A"/></radialGradient>
+    <radialGradient id="gWaxIn" cx=".5" cy=".42" r=".65"><stop offset="0" stop-color="#9C3324"/><stop offset="1" stop-color="#5A1910"/></radialGradient>
+    <!-- writing nib, tip at (0,0) pointing down-left -->
+    <symbol id="nibpen" viewBox="0 0 260 60" overflow="visible">
+      <path d="M0 30 L52 18 C60 22 62 38 52 42 Z" fill="url(#gNib)"/>
+      <path d="M3 30 L40 30" stroke="#4a3412" stroke-width="1.3"/><circle cx="42" cy="30" r="2.4" fill="#4a3412"/>
+      <path d="M52 18 C60 22 62 38 52 42 L84 40 L84 20 Z" fill="#1a120c"/>
+      <rect x="84" y="15" width="176" height="30" rx="6" fill="#2a1a10"/>
+      <rect x="84" y="15" width="176" height="9" rx="4" fill="#fff" opacity=".1"/>
+      <rect x="150" y="14" width="6" height="32" fill="url(#gGold)"/>
+    </symbol>
+    <symbol id="seal" viewBox="0 0 200 200">
+      <path d="M100 8C141 5 177 30 187 65C198 102 189 141 161 168C133 195 85 198 53 179C19 159 4 119 12 81C21 40 58 11 100 8Z" fill="url(#gWax)"/>
+      <circle cx="100" cy="103" r="64" fill="url(#gWaxIn)"/>
+      <circle cx="100" cy="103" r="64" fill="none" stroke="#3E0D07" stroke-width="4" opacity=".55"/>
+      <circle cx="100" cy="103" r="54" fill="none" stroke="#3E0D07" stroke-width="1.5" opacity=".45" stroke-dasharray="2 4"/>
+      <text x="99" y="128" text-anchor="middle" font-family="Bodoni Moda, serif" font-weight="700" font-size="72" fill="#F1B9A6" opacity=".26">P</text>
+      <text x="100" y="130" text-anchor="middle" font-family="Bodoni Moda, serif" font-weight="700" font-size="72" fill="#3E0D07" opacity=".72">P</text>
+      <ellipse cx="70" cy="58" rx="22" ry="9" fill="#fff" opacity=".15" transform="rotate(-30 70 58)"/>
+    </symbol>
+    <filter id="deckle" x="-2%" y="-2%" width="104%" height="104%">
+      <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="3" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="viewport">
+<div class="stage" id="stage">
+<div class="deck" id="deck">
+
+  <!-- ======================= 01 INTRO ======================= -->
+  <section class="page p1" data-title="첫 화면" data-chapter="언론부 소개" aria-label="01 첫 화면">
+    <div class="hero-photo" data-depth="10"><div class="hero-photo__img" id="heroPhoto"></div></div>
+    <div class="hero-light" id="heroLight"></div>
+    <canvas class="dust" id="dust" aria-hidden="true"></canvas>
+
+    <svg class="ink" id="ink" viewBox="0 0 600 470" aria-label="우리는, 학교의 순간을 기록합니다.">
+      <defs>
+        <filter id="inkF" x="-5%" y="-10%" width="110%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" result="d"/>
+          <feGaussianBlur in="d" stdDeviation=".35"/>
+        </filter>
+        <linearGradient id="inkFe" x1="0" x2="1"><stop offset=".82" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <mask id="inkM1" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="470"><rect class="im" x="0" y="0" width="0" height="160" fill="url(#inkFe)"/></mask>
+        <mask id="inkM2" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="470"><rect class="im" x="0" y="150" width="0" height="150" fill="url(#inkFe)"/></mask>
+        <mask id="inkM3" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="470"><rect class="im" x="0" y="295" width="0" height="175" fill="url(#inkFe)"/></mask>
+      </defs>
+      <g class="ink__txt" filter="url(#inkF)">
+        <text mask="url(#inkM1)" x="8" y="118">우리는,</text>
+        <text mask="url(#inkM2)" x="8" y="262">학교의 순간을</text>
+        <text mask="url(#inkM3)" x="8" y="406">기록합니다.</text>
+      </g>
+    </svg>
+
+    <figure class="hero-cam" data-depth="26">
+      <div class="hero-cam__img" id="heroCam"></div>
+      <span class="glint glint--1"></span><span class="glint glint--2"></span>
+    </figure>
+
+    <div class="lockup" data-depth="4">
+      <p class="lk-pre" data-sh>인덕대학교 총학생회</p>
+      <h1 class="lk-title" data-split>언론부</h1>
+      <span class="lk-rule" data-sh></span>
+      <p class="lk-sub" data-sh>학교의 오늘을 기록하고,<br>그 기록을 한 권의 잡지로 남깁니다.</p>
+      <p class="lk-by" data-sh>발표 <b data-cfg="presenter">김영빈</b> · <span data-cfg="presenterRole">총학생회 언론부장</span></p>
+    </div>
+    <p class="hint mono" id="introHint">다음 <span>→</span></p>
+  </section>
+
+  <!-- ======================= 02 ABOUT ======================= -->
+  <section class="page p2" data-title="소개" data-chapter="I — About" aria-label="02 소개">
+    <div class="light light--a"></div>
+    <span class="bignum" aria-hidden="true" data-depth="18">01</span>
+    <div class="p2__wrap">
+      <div class="p2__head">
+        <p class="kicker" data-r><span>I</span>Chapter One — The Desk</p>
+        <h2 class="hero-t" data-split>We keep<br>the <em>moments.</em></h2>
+      </div>
+      <div class="p2__side">
+        <p class="lead-kr" data-r>학교의 오늘을 모아,<br>내일의 기억으로 남깁니다.</p>
+        <div class="body" data-r>
+          <p>인덕대학교 총학생회 언론부는 학교에서 일어나는 다양한 행사와 활동, 그리고 학우들의 이야기를 기록하고 정리하는 부서입니다.</p>
+          <p>흩어지는 순간을 모아 하나의 이야기로 만들고, 한 해의 끝에 그 모든 기록을 <b>한 권의 매거진</b>으로 완성합니다.</p>
+        </div>
+      </div>
+      <ol class="pillars">
+        <li data-r><span class="pl-n">i.</span><p class="mono">Role — 역할</p><h3>기록하는 사람들</h3><p>교내 행사와 활동, 학생자치기구의 사업과 학우들의 이야기를 현장에서 기록하고 정리합니다.</p></li>
+        <li data-r><span class="pl-n">ii.</span><p class="mono">Purpose — 목적</p><h3>잇는 사람들</h3><p>흩어지는 순간을 하나의 이야기로 엮어 학우들과 공유하고, 학우와 총학생회를 연결합니다.</p></li>
+        <li data-r><span class="pl-n">iii.</span><p class="mono">Direction — 방향</p><h3>남기는 사람들</h3><p>한 해의 기록을 연말 잡지로 완성해, 시간이 지나도 다시 꺼내 볼 수 있는 학교의 아카이브를 만듭니다.</p></li>
+      </ol>
+    </div>
+    <div class="unfold" aria-hidden="true"><div class="uf uf--t"><span></span></div><div class="uf uf--b"><span></span></div></div>
+  </section>
+
+  <!-- ======================= 03 OUR WORK ======================= -->
+  <section class="page p3" data-title="주요 활동" data-chapter="II — Our Work" aria-label="03 우리의 일">
+    <div class="light light--b"></div>
+    <div class="p3__left">
+      <p class="kicker" data-r><span>II</span>Chapter Two — On Assignment</p>
+      <h2 class="hero-t hero-t--md" data-split>Our <em>work.</em></h2>
+      <p class="lead-kr" data-r>현장에서 지면까지,<br>사진과 글로 남깁니다.</p>
+      <ol class="process">
+        <li data-r><span class="mono">01</span><h3>취재 · 촬영</h3><p>축제와 행사, 사업의 현장을 찾아가 사진과 영상으로 담습니다.</p></li>
+        <li data-r><span class="mono">02</span><h3>기록 · 정리</h3><p>현장의 이야기와 학우들의 목소리를 글로 정리합니다.</p></li>
+        <li data-r><span class="mono">03</span><h3>편집 · 디자인</h3><p>사진을 고르고 원고를 다듬어 카드뉴스와 지면을 만듭니다.</p></li>
+        <li data-r><span class="mono">04</span><h3>발행 · 공유</h3><p>SNS와 연말 잡지로 학우들에게 기록을 전합니다.</p></li>
+      </ol>
+    </div>
+    <div class="tiles" id="tiles"></div>
+    <svg class="iris" id="iris" viewBox="-100 -56.25 200 112.5" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g id="irisBlades"></g></svg>
+  </section>
+
+  <!-- ======================= 04 ARCHIVE ======================= -->
+  <section class="page p4" data-title="우리의 기록" data-chapter="III — Archive" aria-label="04 아카이브">
+    <div class="light light--c"></div>
+    <div class="p4__head">
+      <div>
+        <p class="kicker" data-r><span>III</span>Chapter Three — The Archive</p>
+        <h2 class="hero-t hero-t--md" data-split>The <em>archive.</em></h2>
+      </div>
+      <div class="p4__aside" data-r>
+        <p class="lead-kr lead-kr--sm">기록은 다시 꺼내 볼 때<br>비로소 완성됩니다.</p>
+        <p class="mono">Click a frame to view</p>
+      </div>
+    </div>
+    <div class="film" id="film" data-r>
+      <div class="film__edge film__edge--t"><span>PRESS 400 · SAFETY FILM · <span data-cfg="year">2026</span></span></div>
+      <div class="film__track" id="filmTrack"></div>
+      <div class="film__edge film__edge--b"></div>
+    </div>
+    <ol class="index" id="index">
+      <li data-r data-thumb="archive:4"><span class="mono">R. 01</span><h3>Annual Magazine <em><span data-cfg="year">2026</span></em></h3><p>한 해의 행사와 활동, 캠퍼스의 풍경과 학우들의 이야기를 담은 언론부의 연말 잡지.</p><span class="mono">Magazine</span></li>
+      <li data-r data-thumb="archive:0"><span class="mono">R. 02</span><h3>The Festival <em>Issue</em></h3><p>무대와 사람들, 그날의 열기를 사진과 글로 엮은 축제 특집 기록.</p><span class="mono">Special</span></li>
+      <li data-r data-thumb="archive:5"><span class="mono">R. 03</span><h3>Council <em>Report</em></h3><p>총학생회가 한 해 동안 진행한 사업과 현장을 정리한 학생자치의 기록.</p><span class="mono">Report</span></li>
+    </ol>
+    <div class="thumb" id="thumb"><span></span></div>
+  </section>
+
+  <!-- ======================= 05 ENDING ======================= -->
+  <section class="page p5" data-title="마무리" data-chapter="Epilogue" data-steps="2" aria-label="05 엔딩">
+    <div class="light light--intro"></div>
+    <div class="sheet sheet--end" id="endSheet">
+      <div class="paper" id="endPaper">
+        <div class="paper__rules"></div>
+        <p class="pp-top" data-sh>From the Press Room <i>·</i> Last Page</p>
+        <svg class="write write--end" id="writeEnd" viewBox="0 0 1000 200" aria-label="We make moments last.">
+          <defs>
+            <linearGradient id="fe2" x1="0" x2="1"><stop offset=".9" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <mask id="wm2" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="200"><rect class="wm" x="0" y="0" width="0" height="200" fill="url(#fe2)"/></mask>
+          </defs>
+          <g mask="url(#wm2)"><text class="wtext" x="500" y="140" text-anchor="middle">We make moments last.</text></g>
+          <g class="wpen"><g transform="rotate(-38)"><use href="#nibpen" x="0" y="-22" width="260" height="44"/></g></g>
+        </svg>
+        <div class="letter">
+          <p class="tl">우리의 한 해를 기록하고, 그 기록을 하나의 매거진으로 완성합니다.</p>
+          <p class="tl">지나가는 순간이 오래 남는 이야기가 되도록, 언론부는 계속 기록하겠습니다.</p>
+          <p class="tl tl--sign">— 인덕대학교 총학생회 언론부, <span data-cfg="presenter">김영빈</span></p>
+        </div>
+        <svg class="seal seal--end" id="endSeal" viewBox="0 0 200 200"><use href="#seal"/></svg>
+      </div>
+      <div class="flap" id="endFlap"></div>
+    </div>
+    <div class="fin" id="fin">
+      <p class="mono" data-f>The Press Room — Induk University Student Council</p>
+      <h2 class="fin__t" data-split-f><em>Thank you.</em></h2>
+      <span class="fin__rule" data-f></span>
+      <p class="lead-kr" data-f>총학생회 언론부였습니다.</p>
+    </div>
+    <p class="hint mono" id="endHint">Press <span>→</span> to fold the letter</p>
+  </section>
+
+  <!-- global overlays -->
+  <div class="wipe" id="wipe" aria-hidden="true"><i></i><i></i></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- lightbox -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="사진 크게 보기" hidden>
+    <div class="lb__bg" id="lbBg"></div>
+    <figure class="lb__fig" id="lbFig">
+      <div class="lb__img" id="lbImg"></div>
+      <figcaption><span class="mono" id="lbNo"></span><span class="lb__cap" id="lbCap"></span></figcaption>
+    </figure>
+    <button class="lb__btn lb__prev" id="lbPrev" type="button" aria-label="이전 사진">Prev</button>
+    <button class="lb__btn lb__next" id="lbNext" type="button" aria-label="다음 사진">Next</button>
+    <button class="lb__close mono" id="lbClose" type="button">Close</button>
+  </div>
+
+  <!-- HUD -->
+  <header class="hud hud--t">
+    <p class="wordmark"><em>The Press Room</em><span class="mono">№ <span data-cfg="year">2026</span></span></p>
+    <div class="hud__r">
+      <p class="mono chapter"><span id="chapter">Prologue</span></p>
+      <button class="fs mono" id="fsbtn" type="button" title="전체 화면 (F)">전체 화면</button>
+    </div>
+  </header>
+  <footer class="hud hud--b">
+    <div class="pager"><span class="pager__n"><span class="roll" id="roll"></span></span><span class="mono">/ 05</span></div>
+    <nav class="segs" id="segs" aria-label="페이지"></nav>
+    <div class="navs">
+      <button class="nb" id="prev" type="button" aria-label="이전 페이지" data-mag><span>←</span></button>
+      <button class="nb" id="next" type="button" aria-label="다음 페이지" data-mag><span>→</span></button>
+    </div>
+  </footer>
+
+  <!-- preloader -->
+  <div class="loader" id="loader">
+    <p class="ld__t">인덕대학교 총학생회 언론부</p>
+    <p class="ld__mark"><em>The Press Room</em></p>
+    <div class="ld__b"><span class="ld__n" id="ldn">000</span><div class="ld__bar"><i id="ldbar"></i></div><p class="ld__lbl">한 해를 인화하는 중</p></div>
+  </div>
+
+  <!-- cursor -->
+  <div class="cur" id="cur" aria-hidden="true"><span class="cur__ring"><b id="curLbl"></b></span><span class="cur__dot"></span></div>
+
+</div>
+</div>
+</div>
+<!--BODY-END-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
