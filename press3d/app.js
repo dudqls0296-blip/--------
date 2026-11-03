@@ -79,7 +79,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("#120D09");
 scene.fog = new THREE.Fog("#120D09", 1.4, 3.6);
 
-const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.02, 20);
+const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.05, 10);   // 깊이 정밀도 확보 (얇은 종이 겹침 깜빡임 방지)
 const rig = { pos: V(0.42, 1.5, 1.7), look: V(0.05, 0.02, -0.2) };
 const lookNow = rig.look.clone();
 camera.position.copy(rig.pos);
@@ -87,7 +87,8 @@ const focusPt = V(0, 0, 0);           // 피사계 심도 초점
 const keyAim = V(0.02, 0, -0.02);     // 키라이트가 비추는 곳
 const KEY_OFF = V(-0.85, 1.55, 0.75);
 
-const composer = new EffectComposer(renderer);
+// 후처리 버퍼에도 MSAA(4x)를 걸어 가는 선·글자 가장자리의 지글거림을 없앤다
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio(), { samples: 4, type: THREE.HalfFloatType }));
 composer.addPass(new RenderPass(scene, camera));
 const bokeh = new BokehPass(scene, camera, { focus: 0.85, aperture: 0.0018, maxblur: 0.006 });
 composer.addPass(bokeh);
@@ -954,7 +955,7 @@ const clock = new THREE.Clock();
 const tmp = V(0, 0, 0);
 function frame() {
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
-  const flick = 0.92 + Math.sin(t * 13.1) * 0.03 + Math.sin(t * 7.3 + 1.2) * 0.04 + Math.sin(t * 23.7) * 0.015;
+  const flick = 0.98 + Math.sin(t * 1.7) * 0.012 + Math.sin(t * 2.9 + 1.2) * 0.008;   // 아주 느리고 약한 불꽃 흔들림
   lampLight.intensity = light.lamp * 0.9 * flick;
   if (models.flame) models.flame.emissiveIntensity = light.lamp * 5 * flick;
   key.intensity = light.key * 9; key.angle = light.angle;
@@ -982,11 +983,14 @@ function frame() {
   // 카메라
   pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 2.5);
   pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 2.5);
+  if (Math.abs(pointer.x - pointer.sx) < 1e-4) pointer.sx = pointer.x;
+  if (Math.abs(pointer.y - pointer.sy) < 1e-4) pointer.sy = pointer.y;
   tmp.copy(rig.pos);
-  tmp.x += pointer.sx * 0.03 + Math.sin(t * 0.21) * 0.006;
-  tmp.y += -pointer.sy * 0.018 + Math.sin(t * 0.17) * 0.004;
-  camera.position.lerp(tmp, 1 - Math.pow(0.0006, dt));
-  lookNow.lerp(rig.look, 1 - Math.pow(0.0006, dt));
+  tmp.x += pointer.sx * 0.02;
+  tmp.y += -pointer.sy * 0.012;
+  // 목표에 거의 닿으면 딱 멈춰서, 정지 화면에서 글자·선이 미세하게 떨리지 않게 한다
+  if (camera.position.distanceToSquared(tmp) < 1e-10) camera.position.copy(tmp); else camera.position.lerp(tmp, 1 - Math.pow(0.0006, dt));
+  if (lookNow.distanceToSquared(rig.look) < 1e-10) lookNow.copy(rig.look); else lookNow.lerp(rig.look, 1 - Math.pow(0.0006, dt));
   camera.lookAt(lookNow);
   bokeh.uniforms.focus.value = camera.position.distanceTo(focusPt);
 
