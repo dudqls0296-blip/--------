@@ -46,15 +46,27 @@ const ASSETS = {
   },
   wood: { map: "press3d/textures/pr3d-wood-diff.jpg", normal: "press3d/textures/pr3d-wood-nor.jpg", rough: "press3d/textures/pr3d-wood-rough.jpg" },
   hdr: "press3d/textures/pr3d-room.hdr",
-  prints: ["images/pr-shoot-1.jpg", "images/pr-concert.jpg", "images/pr-graduation.jpg", "images/pr-track.jpg", "images/pr-stage-lights.jpg", "images/pr-prints-basket.jpg"],
-  // 잡지 지면에 들어갈 사진 (현재는 예시 이미지)
+  // 책상 위 인화 사진 (2026 언론부 실제 사진) — 0~3: PAGE 01 · 4~8: PAGE 02 · 9~11: PAGE 03 자료 수집
+  prints: ["images/pr-desk-1.jpg", "images/pr-desk-2.jpg", "images/pr-desk-3.jpg", "images/pr-desk-4.jpg",
+    "images/pr-drop-1.jpg", "images/pr-drop-2.jpg", "images/pr-drop-3.jpg", "images/pr-drop-4.jpg", "images/pr-council-meeting.jpg",
+    "images/pr-sports-festival.jpg", "images/pr-vision-camp.jpg", "images/pr-dept-event.jpg"],
+  // 잡지 지면에 들어갈 사진 (2026 언론부 실제 기록)
   magazine: {
-    cover: "images/pr-stage-lights.jpg",
-    sections: ["images/pr-track.jpg", "images/pr-graduation.jpg", "images/pr-shoot-1.jpg", "images/pr-concert.jpg", "images/pr-prints-basket.jpg"]
+    cover: "images/pr-cover.jpg",
+    sections: ["images/pr-sports-festival.jpg", "images/pr-vision-camp.jpg", "images/pr-council-trip.jpg", "images/pr-campus-life.jpg", "images/pr-year-end.jpg"],
+    // 각 기사 지면(펼친 면 왼쪽)의 작은 사진
+    articles: ["images/pr-dept-event.jpg", "images/pr-council-meeting.jpg", "images/pr-campus-picnic.jpg", "images/pr-year-end-2.jpg", "images/pr-vision-camp.jpg"]
   },
-  // PAGE 05 실제 작업 사진 자리 (현재는 예시 이미지)
-  work: ["images/pr-shoot-1.jpg", "images/pr-shoot-2.jpg", "images/pr-prints-cards.jpg"]
+  // PAGE 05 폴라로이드 (2026 언론부 실제 사진)
+  work: ["images/pr-work-1.jpg", "images/pr-work-2.jpg", "images/pr-work-3.jpg"]
 };
+/* ---------- 부원 소개 (PAGE 02 · 두 번째 장면) ----------
+   사진: images/member-1.jpg (부장), images/member-2.jpg (차장) 파일을 넣으면 바로 액자에 들어갑니다.
+   이름·소개는 아래 값만 바꾸면 됩니다. (js/config.js 의 PRESS_CONFIG.members 로도 덮어쓸 수 있음) */
+const MEMBERS = (window.PRESS_CONFIG && window.PRESS_CONFIG.members) || [
+  { role: "부장", name: "김영빈", dept: "게임&VR콘텐츠디자인학과", photo: "images/member-1.jpg", desc: "언론부 운영을 총괄하고, 취재와 잡지 편집의 방향을 이끕니다." },
+  { role: "차장", name: "방현식", dept: "방송영상미디어학과", photo: "images/member-2.jpg", desc: "취재 일정을 관리하고, 사진·콘텐츠 제작을 함께 책임집니다." }
+];
 const SECTIONS = ["대학 축제와 체육대회", "학과별 주요 행사", "총학생회 활동 및 주요 소식", "학생들의 대학생활 이야기", "한 해를 마무리하는 기록"];
 
 document.querySelectorAll("[data-cfg]").forEach((el) => { const v = CFG[el.dataset.cfg]; if (v) el.textContent = v; });
@@ -257,6 +269,29 @@ coverObj.rotation.x = -Math.PI / 2;
 coverObj.position.y = 0.0022;
 sheet.add(coverObj);
 coverEl.style.opacity = "0";
+// 같은 표지 글자를 종이에 직접 인쇄한 버전 (카메라가 움직이는 5장에서 HTML 글자가 반짝이지 않도록)
+function drawCoverPrint(ctx, w, h) {
+  const k = w / 840; ctx.clearRect(0, 0, w, h); ctx.save(); ctx.scale(k, k);
+  const L = 74, R = 840 - 74;
+  ctx.textBaseline = "alphabetic";
+  ctx.font = `600 15px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "4.8px"; ctx.fillText("언론부 연말호", L, 75);
+  ctx.font = `500 15px ${MONO}`; ctx.fillStyle = "#5B4632"; ctx.letterSpacing = "2.7px"; ctx.textAlign = "right"; ctx.fillText(`${CFG.year} · VOL.01`, R + 2.7, 75); ctx.textAlign = "left";
+  ctx.fillStyle = "#2B2017"; ctx.fillRect(L, 89, R - L, 1.5);
+  ctx.font = `900 64px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "-1.6px";
+  ctx.fillText("우리가 함께한 순간들,", L, 213); ctx.fillText("한 권의 기록이 되다.", L, 294);
+  ctx.letterSpacing = "0px";
+  ctx.fillStyle = "#6E2230"; ctx.fillRect(L, 344, 120, 2);
+  ctx.font = `400 19px ${SERIF}`; ctx.fillStyle = "#3A2C20";
+  ctx.fillText("학교의 순간을 기록하고, 사진과 이야기로 엮어", L, 396); ctx.fillText("하나의 잡지로 완성합니다.", L, 429);
+  ctx.font = `700 23px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "1.4px"; ctx.fillText("인덕대학교 총학생회 언론부", L, 538); ctx.letterSpacing = "0px";
+  ctx.save(); ctx.translate(R - 22, 518); ctx.rotate(-8 * Math.PI / 180); ctx.globalAlpha = 0.85;
+  ctx.strokeStyle = "#6E2230"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 21, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = "#6E2230"; ctx.font = `700 22px ${SERIF}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("言", 0, 1);
+  ctx.restore(); ctx.restore();
+}
+const coverGLMat = new THREE.MeshStandardMaterial({ map: liveTex(2048, 1448, drawCoverPrint), transparent: true, opacity: 0, roughness: 0.9, depthWrite: false });
+const coverGL = new THREE.Mesh(flatPlane(SHEET_W, SHEET_H), coverGLMat);
+coverGL.position.y = 0.0022; coverGL.receiveShadow = true; coverGL.renderOrder = 2; sheet.add(coverGL);
 
 /* ---- 원고지 (400자, 20×20) ---- */
 const MS = { w: 1024, h: 1448, mx: 70, my: 110, cols: 20, rows: 20 };
@@ -301,7 +336,7 @@ function setHome(o, x, y, z, ry) { o.userData.home = { p: V(x, y, z), ry }; o.po
 
 /* ---- PAGE 02 · 하나씩 떨어지는 인화 사진 + 펼쳐지는 원고지 ---- */
 const ZB = V(-0.82, 0, -0.02);
-const prints2 = [[-1.02, 0.09, 0.22, 4], [-0.98, -0.18, -0.18, 2], [-0.69, -0.21, 0.3, 0], [-0.68, 0.17, -0.12, 5], [-1.1, -0.03, -0.4, 1]]
+const prints2 = [[-1.02, 0.09, 0.22, 4], [-1.16, -0.13, -0.18, 5], [-0.6, -0.17, 0.3, 6], [-0.68, 0.17, -0.12, 7], [-1.1, -0.03, -0.4, 8]]
   .map(([x, z, ry, i], k) => { const p = makePrint(ASSETS.prints[i], 10 + k); setHome(p, x, 0.0012 + k * 0.0005, z, ry); scene.add(p); return p; });
 const msB = new THREE.Group(); msB.position.set(-0.83, 0.002, 0.0); msB.rotation.y = 0.1; scene.add(msB);
 const halfTex = (top) => { const t = msTex.clone(); t.repeat.set(1, 0.5); t.offset.set(0, top ? 0.5 : 0); t.needsUpdate = true; return t; };
@@ -312,8 +347,89 @@ const msBTop = new THREE.Mesh(flatPlane(0.21, 0.1485), new THREE.MeshStandardMat
 msBTop.position.set(0, 0.0004, -0.1485 / 2); msBTop.castShadow = msBTop.receiveShadow = true; msBHinge.add(msBTop);
 const foldB = { t: 1 };
 
+/* ---- PAGE 02 · 부원 소개 액자 (원목 액자 + 실제 HTML 사진·이름) ---- */
+const FRAME_W = 0.15, FRAME_H = 0.205, FRAME_D = 0.014, MAT_W = 0.126, MAT_H = 0.181, CARD_PX = 520;
+const frameMat = new THREE.MeshPhysicalMaterial({ color: "#3A2416", roughness: 0.42, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.25 });
+const brassMat = new THREE.MeshStandardMaterial({ color: "#B08A4E", roughness: 0.3, metalness: 1 });
+const memberEls = [];
+function drawMemberCard(ctx, w, h, m) {
+  const k = w / 520, P = 34 * k, PW = w - P * 2, PH = 520 * k;
+  ctx.fillStyle = "#F1EADB"; ctx.fillRect(0, 0, w, h);
+  const sh = ctx.createLinearGradient(0, 0, 0, 40 * k); sh.addColorStop(0, "rgba(60,40,20,.22)"); sh.addColorStop(1, "rgba(60,40,20,0)");
+  ctx.fillStyle = sh; ctx.fillRect(0, 0, w, 40 * k);
+  const im = img(m.photo);
+  if (im) {
+    const r = Math.max(PW / im.naturalWidth, PH / im.naturalHeight), iw = im.naturalWidth * r, ih = im.naturalHeight * r;
+    ctx.save(); ctx.beginPath(); ctx.rect(P, P, PW, PH); ctx.clip();
+    ctx.filter = "sepia(.12) contrast(1.03)";
+    ctx.drawImage(im, P + (PW - iw) / 2, P + (PH - ih) / 2, iw, ih);
+    ctx.restore(); ctx.filter = "none";
+  } else {
+    const g = ctx.createRadialGradient(w / 2, P + PH * 0.4, 0, w / 2, P + PH * 0.4, PH * 0.7);
+    g.addColorStop(0, "#5a4636"); g.addColorStop(1, "#231a13"); ctx.fillStyle = g; ctx.fillRect(P, P, PW, PH);
+    ctx.fillStyle = "rgba(243,237,224,.16)";
+    ctx.beginPath(); ctx.arc(w / 2, P + PH * 0.22 + 75 * k, 75 * k, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w / 2, P + PH * 0.22 + 175 * k + 150 * k, 150 * k, 150 * k, 0, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = "rgba(243,237,224,.75)"; ctx.textAlign = "center"; ctx.font = `500 ${26 * k}px 'Noto Sans KR', sans-serif`;
+    ctx.fillText("사진 자리", w / 2, P + PH - 52 * k);
+    ctx.fillStyle = "rgba(243,237,224,.5)"; ctx.font = `400 ${18 * k}px 'IBM Plex Mono', monospace`; ctx.fillText(m.photo, w / 2, P + PH - 24 * k);
+  }
+  ctx.strokeStyle = "rgba(40,25,12,.35)"; ctx.lineWidth = 1.5 * k; ctx.strokeRect(P, P, PW, PH);
+  ctx.strokeStyle = "rgba(60,40,20,.18)"; ctx.lineWidth = 2 * k; ctx.strokeRect(k, k, w - 2 * k, h - 2 * k);
+  // 이름 영역
+  const top = P + PH, cy = top + (h - top) / 2;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  const spaced = (txt, font, color, y, ls) => { ctx.font = font; ctx.fillStyle = color; ctx.letterSpacing = ls + "px"; ctx.fillText(txt, w / 2 + ls / 2, y); ctx.letterSpacing = "0px"; };
+  spaced(m.role, `600 ${34 * k}px 'IBM Plex Mono', 'Noto Sans KR', monospace`, "#6E2230", cy - 68 * k, 13.6 * k);
+  spaced(m.name, `900 ${60 * k}px 'Noto Serif KR', serif`, "#16110C", cy - 4 * k, 4.8 * k);
+  spaced(m.dept || "", `500 ${24 * k}px 'Noto Sans KR', sans-serif`, "#5B4632", cy + 58 * k, -0.24 * k);
+  ctx.textBaseline = "alphabetic";
+}
+const frames = MEMBERS.slice(0, 2).map((m, k) => {
+  const g = new THREE.Group();
+  g.position.set(k === 0 ? -0.985 : -0.735, 0, -0.31);
+  g.rotation.y = k === 0 ? 0.16 : -0.1;
+  const tiltG = new THREE.Group(); tiltG.rotation.x = -0.2; g.add(tiltG);         // 뒤로 살짝 기운 액자
+  const body = new THREE.Mesh(new THREE.BoxGeometry(FRAME_W, FRAME_H, FRAME_D), frameMat);
+  body.position.y = FRAME_H / 2; body.castShadow = body.receiveShadow = true; tiltG.add(body);
+  const matBack = new THREE.Mesh(new THREE.PlaneGeometry(MAT_W + 0.004, MAT_H + 0.004), new THREE.MeshStandardMaterial({ color: "#EFE7D6", roughness: 0.9 }));
+  matBack.position.set(0, FRAME_H / 2, FRAME_D / 2 + 0.0004); matBack.receiveShadow = true; tiltG.add(matBack);
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.004, 0.003), brassMat);
+  plate.position.set(0, 0.004, FRAME_D / 2 + 0.0015); tiltG.add(plate);
+  const leg = new THREE.Mesh(new THREE.BoxGeometry(0.03, FRAME_H * 0.8, 0.004), frameMat);
+  leg.position.set(0, 0.075, -0.074); leg.rotation.x = 0.42; leg.castShadow = true; g.add(leg);   // 받침대는 액자 뒤에만 (앞면을 뚫고 나오지 않게)
+  // 사진 + 직책 + 이름을 액자 안 실제 3D 면에 그린다 (카메라가 움직여도 사라지지 않음)
+  const tex = liveTex(1040, 1494, (ctx, w, h) => drawMemberCard(ctx, w, h, m));
+  const card = new THREE.Mesh(new THREE.PlaneGeometry(MAT_W, MAT_H), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.55, emissive: "#ffffff", emissiveMap: tex, emissiveIntensity: 0.32 }));
+  card.position.set(0, FRAME_H / 2, FRAME_D / 2 + 0.0008); card.receiveShadow = true;
+  tiltG.add(card);
+  memberEls.push(card);
+  scene.add(g);
+  return g;
+});
+// 액자 클릭 영역: 액자보다 넉넉한 투명 판 (정확히 누른 액자만 반응)
+const frameHits = [];
+frames.forEach((g, k) => {
+  g.userData.home = g.position.clone();
+  const hit = new THREE.Mesh(new THREE.PlaneGeometry(FRAME_W + 0.03, FRAME_H + 0.03), new THREE.MeshBasicMaterial({ visible: false }));
+  hit.position.set(0, FRAME_H / 2, FRAME_D / 2 + 0.003); hit.userData.member = k;
+  g.children[0].add(hit); frameHits.push(hit);   // 기울어진 액자 면과 정확히 같은 위치
+});
+// 선택한 액자 쪽으로 카메라가 다가간다 (두 액자는 계속 화면 안에 그대로 보인다)
+let selected = -1;
+function selectMember(k) {
+  selected = k;
+}
+function memberShot(k) {
+  const g = frames[k], fwd = V(Math.sin(g.rotation.y), 0, Math.cos(g.rotation.y)), right = V(Math.cos(g.rotation.y), 0, -Math.sin(g.rotation.y));
+  const d = k === 0 ? 0.55 : 0.6, off = k === 0 ? 0.1 : 0.015;
+  const c = g.position.clone().add(V(0, FRAME_H * 0.5, 0)).addScaledVector(fwd, -0.01);
+  return { pos: c.clone().addScaledVector(fwd, d).add(V(0, 0.05, 0)), look: c.clone().addScaledVector(right, off), focus: c.clone(), aim: c.clone() };
+}
+function membersVisible() {}   // 액자 사진은 실제 오브젝트라 항상 보인다
+
 /* ---- PAGE 03 · STEP 1 자료 수집 (카메라 곁의 사진과 필름) ---- */
-const prints3 = [[0.5, 0.2, -0.35, 1], [0.56, -0.02, 0.25, 3], [0.62, 0.17, 0.05, 2]]
+const prints3 = [[0.5, 0.2, -0.35, 9], [0.56, -0.02, 0.25, 10], [0.62, 0.17, 0.05, 11]]
   .map(([x, z, ry, i], k) => { const p = makePrint(ASSETS.prints[i], 20 + k, 0.12, 0.08); setHome(p, x, 0.0012 + k * 0.0005, z, ry); scene.add(p); return p; });
 function filmTexture() {
   return canvasTex(2048, 256, (ctx, w, h) => {
@@ -372,7 +488,6 @@ function pageCover(ctx, w, h) {
   drawPhoto(ctx, ASSETS.magazine.cover, 70, 560, w - 140, 640, 2);
   ctx.fillStyle = "#6E2230"; ctx.fillRect(70, 1250, 90, 4);
   ctx.fillStyle = "#16110C"; ctx.font = `700 36px ${SERIF}`; ctx.fillText("인덕대학교 총학생회 언론부", 70, 1316);
-  ctx.font = `400 20px ${MONO}`; ctx.fillStyle = "#5B4632"; ctx.fillText("예시 이미지", w - 200, 1236);
 }
 function pageContents(ctx, w, h) {
   drawPaper(ctx, w, h, 43, "#F1E9D8");
@@ -394,7 +509,6 @@ function pageSection(i) {
     ctx.fillStyle = "#16110C"; ctx.font = `900 76px ${SERIF}`;
     wrapText(ctx, SECTIONS[i], w - 150).forEach((l, k) => ctx.fillText(l, 70, 370 + k * 92));
     drawPhoto(ctx, ASSETS.magazine.sections[i], 70, 560, w - 140, 560, i);
-    ctx.fillStyle = "rgba(243,237,224,.9)"; ctx.font = `400 20px ${MONO}`; ctx.fillText("예시 이미지", 90, 1100);
     greek(ctx, 70, 1170, w - 140, 6, 30, 60 + i);
     ctx.fillStyle = "#5B4632"; ctx.font = `500 22px ${MONO}`; ctx.fillText(String(6 + i * 14).padStart(3, "0"), 70, h - 60);
   };
@@ -408,7 +522,7 @@ function pageArticle(i) {
     ctx.fillStyle = "rgba(40,30,22,.55)"; greek(ctx, 170, 210, w - 260, 3, 46, 80 + i, "rgba(40,30,22,.55)");
     const colW = (w - 180) / 2;
     greek(ctx, 70, 420, colW, 24, 30, 90 + i);
-    drawPhoto(ctx, ASSETS.magazine.sections[(i + 2) % 5], 110 + colW, 420, colW, 380, i + 3);
+    drawPhoto(ctx, ASSETS.magazine.articles[i], 110 + colW, 420, colW, 380, i + 3);
     greek(ctx, 110 + colW, 840, colW, 12, 30, 100 + i);
     ctx.fillStyle = "#5B4632"; ctx.font = `500 22px ${MONO}`; ctx.textAlign = "right"; ctx.fillText(String(5 + i * 14).padStart(3, "0"), w - 70, h - 60); ctx.textAlign = "left";
   };
@@ -590,6 +704,7 @@ function updatePen(t) {
 const SHOT = {
   p1: { pos: V(0.03, 0.565, 0.44), look: V(0.02, 0, -0.01), focus: V(0, 0, 0), aim: V(0.02, 0, -0.02) },
   p2: { pos: V(-0.6, 0.6, 0.56), look: V(-0.64, 0, -0.04), focus: V(-0.84, 0, -0.02), aim: V(-0.84, 0, -0.02) },
+  p2b: { pos: V(-0.70, 0.33, 0.54), look: V(-0.70, 0.145, -0.18), focus: V(-0.86, 0.1, -0.28), aim: V(-0.86, 0.05, -0.26) },
   p3: [
     { pos: V(0.27, 0.5, 0.62), look: V(0.24, 0, 0.1), focus: V(0.42, 0, 0.1), aim: V(0.45, 0, 0.1) },
     { pos: V(0.585, 0.27, 0.0), look: V(0.6, 0, -0.245), focus: V(0.64, 0, -0.25), aim: V(0.66, 0, -0.18) },
@@ -597,9 +712,9 @@ const SHOT = {
     { pos: V(1.13, 0.5, 0.45), look: V(1.1, 0, 0.03), focus: V(1.24, 0, 0.02), aim: V(1.24, 0, 0.02) }
   ],
   p4: { pos: V(1.09, 0.66, 0.5), look: V(0.99, 0, -0.01), focus: V(1.14, 0, 0.02), aim: V(1.14, 0, 0.02) },
-  p5a: { pos: V(1.26, 0.66, 0.8), look: V(0.92, 0, -0.04), focus: V(0.85, 0, 0), aim: V(0.85, 0, 0) },
-  p5b: { pos: V(-0.78, 0.66, 0.78), look: V(-0.52, 0, -0.04), focus: V(-0.6, 0, 0), aim: V(-0.6, 0, 0) },
-  p6: { pos: V(-0.1, 0.5, 0.47), look: V(-0.16, 0, 0.03), focus: V(0, 0, 0.02), aim: V(0, 0, 0.02) }
+  p5a: { pos: V(1.26, 0.66, 0.8), look: V(0.92, 0, -0.04), focus: V(0.85, 0, 0), aim: V(0.12, 0, 0.02) },   // 5~6장은 키라이트를 고정해 그림자가 미끄러지며 깜빡이지 않게
+  p5b: { pos: V(-0.78, 0.66, 0.78), look: V(-0.52, 0, -0.04), focus: V(-0.6, 0, 0), aim: V(0.12, 0, 0.02) },
+  p6: { pos: V(-0.1, 0.5, 0.47), look: V(-0.16, 0, 0.03), focus: V(0, 0, 0.02), aim: V(0.12, 0, 0.02) }
 };
 let tl = null;
 function camTo(t, shot, dur = 2.8, at = 0, lift = 0.16, ease = "power3.inOut") {
@@ -642,6 +757,10 @@ const COPY = {
       <h2 class="rv">학교의 시간을<br>기록하는 사람들</h2>
       <p class="rv">언론부는 인덕대학교 총학생회 소속 부서로, 한 해 동안 학교에서 일어난 다양한 행사와 학생들의 이야기를 수집하고 기록합니다.</p>
       <p class="rv">사진과 글을 통해 지나간 순간들을 보존하고, 연말에는 그 기록들을 모아 한 권의 잡지로 제작합니다.</p>` },
+  "1b": { side: "right", html: `<div class="kick rv">PAGE 02 · 부원 소개</div>
+      <h2 class="rv">함께 기록하는<br>사람들</h2>
+      <div class="members rv" data-list>${MEMBERS.slice(0, 2).map((m) => `<div class="member"><b>${m.role}</b><strong>${m.name}</strong><i>${m.dept || ""}</i><p>${m.desc}</p></div>`).join("")}</div>
+      <div class="hint rv">액자를 클릭하면 크게 볼 수 있습니다</div>` },
   2: { side: "left", html: `<div class="kick rv">PAGE 03 · 제작 과정</div>
       <h2 class="rv">한 권의 잡지가<br>완성되기까지</h2>
       <ol class="rv" data-list>${STEPS.map(([t, d], i) => `<li><b>STEP 0${i + 1}</b><span>${t}</span><em>${d}</em></li>`).join("")}</ol>` },
@@ -649,18 +768,19 @@ const COPY = {
       <h2 class="rv">한 권에 담길<br>우리의 순간들</h2>
       <ol class="rv" data-list>${SECTIONS.map((t, i) => `<li><b>0${i + 1}</b><span>${t}</span></li>`).join("")}</ol>
       <div class="hint rv">잡지를 클릭하거나 → 키로 페이지를 넘길 수 있습니다</div>
-      <div class="note rv">※ 지면의 사진은 예시 이미지이며, 실제 행사 사진과 완성된 디자인으로 교체됩니다.</div>` },
+      <div class="note rv">※ 표지와 지면의 사진은 모두 2026년 언론부의 실제 기록입니다.</div>` },
   4: { side: "left", html: `<div class="kick rv">PAGE 05 · 제작 현장</div>
       <h2 class="rv">보이지 않는 곳에서도<br>기록은 만들어집니다</h2>
-      <ol class="rv" data-list>${TASKS.map((t, i) => `<li><b>0${i + 1}</b><span>${t}</span></li>`).join("")}</ol>
-      <div class="note rv">※ 책상 앞쪽의 사진 자리는 실제 작업 사진으로 교체됩니다. (현재 예시 이미지)</div>` },
+      <ol class="rv" data-list>${TASKS.map((t, i) => `<li><b>0${i + 1}</b><span>${t}</span></li>`).join("")}</ol>` },
   5: { side: "left", cls: "end", html: `<div class="end-lines">
         <p class="rv">지나간 순간은 추억이 되고,<br>우리가 남긴 기록은 또 하나의 이야기가 됩니다.</p>
         <p class="rv">인덕대학교 총학생회 언론부는<br>앞으로도 학교의 다양한 순간을 기록하고 전달하겠습니다.</p></div>
       <div class="name rv" data-name><i></i><strong>인덕대학교 총학생회 언론부</strong><small>${CFG.year} · 한 권의 기록</small></div>` }
 };
 let copyTimer = 0;
+let copyKey = null;
 function setCopy(pageIdx) {
+  copyKey = pageIdx;
   clearTimeout(copyTimer);
   copyEl.classList.remove("in");
   const c = COPY[pageIdx];
@@ -670,6 +790,11 @@ function setCopy(pageIdx) {
     copyEl.innerHTML = c ? c.html : "";
     copyEl.querySelectorAll(".rv").forEach((el, i) => { el.style.transitionDelay = (0.12 + i * 0.12) + "s"; });
     if (pageIdx === 5) { const n = copyEl.querySelector("[data-name]"); if (n) n.style.transitionDelay = "3.6s"; }
+    // 부원 소개: 오른쪽 이름을 눌러도 그 사람에게 카메라가 이동 (같은 이름을 다시 누르면 전체 보기)
+    copyEl.querySelectorAll(".member").forEach((el, k) => el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (page === 1) enter(1, step === 2 + k ? 1 : 2 + k, true);
+    }));
     updateCopyList();
     requestAnimationFrame(() => requestAnimationFrame(() => copyEl.classList.add("in")));
   }, 380);
@@ -681,13 +806,14 @@ function updateCopyList() {
   if (page === 2) on = step;
   else if (page === 3) on = Math.max(0, spread.k - 1);
   else if (page === 4) on = taskOn;
+  else if (page === 1) { on = step >= 2 ? step - 2 : -1; ol.classList.toggle("focus", on >= 0); }
   items.forEach((li, i) => li.classList.toggle("on", page === 4 ? i <= on : i === on));
 }
 
 /* =====================================================================
    7. 상태 스냅 (장면 건너뛰기·되돌아가기)
    ===================================================================== */
-let page = 0, step = 0, taskOn = -1;
+let page = 0, step = 0, taskOn = -1, prevMemberStep = -1;
 function snapTo(i, s = 0) {
   gsap.killTweensOf([fold, foldB, filmRoll, writing, penCtl, light, ...leaves]);
   allPrints.forEach((p) => { gsap.killTweensOf(p.position); gsap.killTweensOf(p.rotation); });
@@ -737,15 +863,20 @@ function enter(i, s, forward) {
   if (tl) tl.kill();
   tl = gsap.timeline();
   const prevPage = page;
+  prevMemberStep = prevPage === 1 ? step : -1;
   page = i; step = s; renderHud();
   document.getElementById("hudTop").classList.add("on"); document.getElementById("hudBottom").classList.add("on");
-  if (prevPage !== i || i === 0) setCopy(i);
+  const key = i === 1 && s >= 1 ? "1b" : i;
+  if (key !== copyKey || i === 0) setCopy(key);
   else updateCopyList();
+  membersVisible(i === 1);
+  if (!(i === 1 && s >= 2)) selectMember(-1);
+  else if (!forward) selectMember(s - 2);
 
   if (!forward) {                                 // 되돌아가거나 건너뛸 때: 상태를 맞추고 카메라만 이동
     snapTo(i, s);
     if (i === 3) flipTo(1, 0.01);
-    const shot = i === 0 ? SHOT.p1 : i === 1 ? SHOT.p2 : i === 2 ? SHOT.p3[s] : i === 3 ? SHOT.p4 : i === 4 ? SHOT.p5b : SHOT.p6;
+    const shot = i === 0 ? SHOT.p1 : i === 1 ? (s >= 2 ? memberShot(s - 2) : s === 1 ? SHOT.p2b : SHOT.p2) : i === 2 ? SHOT.p3[s] : i === 3 ? SHOT.p4 : i === 4 ? SHOT.p5b : SHOT.p6;
     camTo(tl, shot, 2.2, 0, 0.12);
     if (i === 4) { taskOn = TASKS.length - 1; updateCopyList(); }
     coverVisible(i);
@@ -755,7 +886,10 @@ function enter(i, s, forward) {
   coverVisible(i);
 }
 // 표지 지면의 HTML 글자는 1·5장에서만 보이게 (다른 장면에서 본문과 겹치지 않도록)
-function coverVisible(i) { if (i !== 0) coverEl.style.opacity = i === 4 ? "1" : "0"; }
+function coverVisible(i) {   // 5장: 종이에 인쇄된 버전(WebGL)으로 보여 카메라 이동 중에도 반짝이지 않게
+  if (i !== 0) coverEl.style.opacity = "0";
+  gsap.to(coverGLMat, { opacity: i === 4 ? 1 : 0, duration: i === 4 ? 0.8 : 0.5, overwrite: true });
+}
 
 /* PAGE 01 — 인트로 */
 const SHEET_END = SHOT.p1;
@@ -787,7 +921,14 @@ function enterP1() { snapTo(0); playIntro(introDone); introDone = true; }
 let introDone = false;
 
 /* PAGE 02 — 사진 인화물이 하나씩, 원고지가 펼쳐진다 */
-function enterP2() {
+function enterP2(s) {
+  if (s >= 1) {                                    // 부원 소개: 두 액자가 모두 보이는 구도 유지, 선택한 사람만 크게
+    const fromOutside = !(page === 1 && prevMemberStep >= 1);
+    if (fromOutside) snapTo(1);
+    camTo(tl, s >= 2 ? memberShot(s - 2) : SHOT.p2b, fromOutside ? 2.6 * D : 1.6 * D, 0, fromOutside ? 0.06 : 0.015);
+    selectMember(s - 2);
+    return;
+  }
   snapTo(0);
   camTo(tl, SHOT.p2, 3.2 * D, 0, 0.22);
   msB.visible = true; foldB.t = 1;
@@ -860,7 +1001,7 @@ function enterP4() {
 /* PAGE 05 — 작업 공간을 따라 천천히 이동 */
 function enterP5() {
   snapTo(3);
-  flipTo(1, 0.01);
+  flipTo(1, 0.9 * D);   // 넘겨 둔 잡지는 순간이동 대신 천천히 첫 펼침면으로
   taskOn = -1;
   camTo(tl, SHOT.p5a, 2.6 * D, 0, 0.22);
   polaroids.forEach((p, k) => { p.visible = false; dropIn(tl, p, (1.0 + k * 0.35) * D, 0.9 * D); });
@@ -900,13 +1041,14 @@ const toastEl = document.getElementById("toast");
 function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => toastEl.classList.remove("show"), 2200); }
 function renderHud() {
   [...segs.children].forEach((s, i) => s.classList.toggle("on", i <= page));
-  document.getElementById("chNo").textContent = `PAGE ${PAGES[page].no} / 06` + (page === 2 ? ` · STEP 0${step + 1}` : "");
+  document.getElementById("chNo").textContent = `PAGE ${PAGES[page].no} / 06` + (page === 2 ? ` · STEP 0${step + 1}` : page === 1 && step >= 1 ? " · 부원 소개" + (step === 2 ? " · 부장" : step === 3 ? " · 차장" : "") : "");
   document.getElementById("chTitle").textContent = PAGES[page].title;
   document.getElementById("prev").disabled = page === 0 && step === 0;
   document.getElementById("next").disabled = page === 5;
 }
 function next() {
   if (!started) return;
+  if (page === 1 && step < 3) return enter(1, step + 1, true);
   if (page === 2 && step < 3) return enter(2, step + 1, true);
   if (page === 3 && spread.k < NLEAF - 1) return flipTo(spread.k + 1);
   if (page < 5) return enter(page + 1, 0, true);
@@ -915,7 +1057,8 @@ function prev() {
   if (!started) return;
   if (page === 3 && spread.k > 1) return flipTo(spread.k - 1);
   if (page === 2 && step > 0) return enter(2, step - 1, false);
-  if (page > 0) return enter(page - 1, page - 1 === 2 ? 3 : 0, false);
+  if (page === 1 && step > 0) return enter(1, step - 1, false);
+  if (page > 0) return enter(page - 1, page - 1 === 2 ? 3 : page - 1 === 1 ? 1 : 0, false);
 }
 function jump(i) { if (!started || i === page) return; if (i === page + 1) enter(i, 0, true); else enter(i, 0, false); }
 document.getElementById("next").addEventListener("click", (e) => { e.stopPropagation(); next(); });
@@ -933,6 +1076,13 @@ addEventListener("keydown", (e) => {
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 addEventListener("click", (e) => {
   if (e.target.closest("button")) return;
+  if (page === 1 && step >= 1) {                  // 부원 소개: 액자를 누르면 그 사람을 크게
+    ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(frameHits, false)[0];
+    if (hit) { const k = hit.object.userData.member; return enter(1, step === 2 + k ? 1 : 2 + k, true); }   // 같은 액자를 다시 누르면 원래대로
+    return;                                         // 액자 밖을 누르면 넘어가지 않음 (다음은 → 키·버튼)
+  }
   if (page === 3) {
     ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
     ray.setFromCamera(ndc, camera);
@@ -958,7 +1108,7 @@ function frame() {
   const flick = 0.98 + Math.sin(t * 1.7) * 0.012 + Math.sin(t * 2.9 + 1.2) * 0.008;   // 아주 느리고 약한 불꽃 흔들림
   lampLight.intensity = light.lamp * 0.9 * flick;
   if (models.flame) models.flame.emissiveIntensity = light.lamp * 5 * flick;
-  key.intensity = light.key * 9; key.angle = light.angle;
+  key.intensity = light.key * 9; key.angle = light.angle; key.shadow.focus = 0.55 / light.angle;   // 빛이 좁아져도 그림자 지도 크기는 그대로 (그림자 떨림 방지)
   key.target.position.copy(keyAim); key.position.copy(keyAim).add(KEY_OFF);
   fill.intensity = light.fill * 0.22;
   rim.intensity = light.rim * 0.6;
@@ -1022,7 +1172,7 @@ function start() {
 manager.onLoad = () => setTimeout(start, 250);
 manager.onError = () => {};
 setTimeout(start, 12000);
-if (document.fonts) Promise.all(["900 80px 'Noto Serif KR'", "700 40px 'Noto Serif KR'", "500 20px 'IBM Plex Mono'", "italic 400 80px 'Noto Serif KR'", "40px 'Nanum Pen Script'"].map((f) => document.fonts.load(f))).then(scheduleRepaint).catch(() => {});
+if (document.fonts) Promise.all(["900 80px 'Noto Serif KR'", "700 40px 'Noto Serif KR'", "500 20px 'IBM Plex Mono'", "italic 400 80px 'Noto Serif KR'", "40px 'Nanum Pen Script'", "500 24px 'Noto Sans KR'", "600 34px 'IBM Plex Mono'", "400 19px 'Noto Serif KR'", "500 15px 'IBM Plex Mono'"].map((f) => document.fonts.load(f))).then(scheduleRepaint).catch(() => {});
 window.__press = { page: () => page, enter, snapTo, flipTo, pen, rig, light, leaves, spread };
 frame();
 })().catch((e) => {

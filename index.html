@@ -94,6 +94,33 @@ html,body{margin:0;height:100%;overflow:hidden;background:#120D09;color:var(--iv
 .copy .name strong{font:900 clamp(28px,2.8vw,48px)/1.2 var(--serif);letter-spacing:.06em}
 .copy .name small{font:400 12px/1 var(--mono);letter-spacing:.3em;color:var(--gold)}
 .copy.end{width:min(660px,46vw)} .copy.end .name{align-items:flex-start} .copy.end .name strong{font-size:clamp(26px,2.5vw,44px);white-space:nowrap}
+/* 부원 소개 액자 (CSS3D: 실제 사진과 이름) */
+.member-card{width:520px;height:747px;padding:34px 34px 0;background:#F1EADB;display:flex;flex-direction:column;opacity:0;transition:opacity 1s ease .3s;box-shadow:inset 0 0 0 1px rgba(60,40,20,.18),inset 0 18px 40px -20px rgba(60,40,20,.35)}
+.member-card.on{opacity:1}
+.member-card.on.dim{opacity:.42}
+.member-card .ph{position:relative;flex:0 0 520px;overflow:hidden;background:#2A1F17;box-shadow:0 0 0 1px rgba(40,25,12,.35)}
+.member-card .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.12) contrast(1.03);opacity:0}
+.member-card.has-photo .ph img{opacity:1}
+.member-card.has-photo .ph-empty{display:none}
+.member-card .ph-empty{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(70% 60% at 50% 40%,#5a4636,#231a13)}
+.member-card .ph-empty i{position:absolute;left:50%;top:22%;width:150px;height:150px;margin-left:-75px;border-radius:50%;background:rgba(243,237,224,.16)}
+.member-card .ph-empty i::after{content:"";position:absolute;left:50%;top:175px;width:300px;height:200px;margin-left:-150px;border-radius:150px 150px 0 0;background:rgba(243,237,224,.16)}
+.member-card .ph-empty span{position:absolute;bottom:26px;left:0;right:0;text-align:center;font:500 26px/1.4 var(--sans);color:rgba(243,237,224,.75)}
+.member-card .ph-empty small{font:400 18px/1 var(--mono);color:rgba(243,237,224,.5)}
+.member-card .nm{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink)}
+.member-card .nm b{font:600 34px/1 var(--mono);letter-spacing:.4em;color:#6E2230;padding-left:.4em}
+.member-card .nm strong{font:900 60px/1 var(--serif);letter-spacing:.08em}
+.member-card .nm em{font:500 24px/1.2 var(--sans);font-style:normal;color:#5B4632;letter-spacing:-.01em}
+.copy .member{margin-top:28px;padding-top:20px;border-top:1px solid rgba(243,237,224,.16)}
+.copy .member{transition:opacity .6s ease,background .3s ease;pointer-events:auto;cursor:pointer;margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
+.copy .member:hover{background:rgba(243,237,224,.06)}
+.copy .member:hover strong{color:#fff}
+.copy .members.focus .member{opacity:.3}
+.copy .members.focus .member.on{opacity:1}
+.copy .member b{font:500 12px/1 var(--mono);letter-spacing:.3em;color:var(--gold)}
+.copy .member strong{display:block;margin-top:10px;font:900 clamp(26px,2.3vw,40px)/1.2 var(--serif)}
+.copy .member i{display:block;margin-top:6px;font:500 clamp(13px,1vw,16px)/1.4 var(--sans);font-style:normal;color:rgba(243,237,224,.62)}
+.copy .member p{margin-top:10px;font-size:clamp(15px,1.1vw,19px);line-height:1.8}
 /* 원고지 위 손글씨 (CSS3D) */
 .ms-type{position:relative;width:1024px;height:1448px;font-family:"Nanum Pen Script",cursive;color:#1F2638}
 .ms-type .ch{position:absolute;display:grid;place-items:center;font-size:52px;line-height:1;opacity:0;transform:translateY(3px);transition:opacity .22s,transform .22s}
@@ -137,7 +164,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#120D09;color:var(--iv
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
   // 파일을 더블클릭해서 열었을 때(file://)는 3D 모델·사진을 내장 자료에서 읽어 옵니다
-  if (location.protocol === "file:") document.write('<script src="press3d/offline-assets.js"><\/script>');
+  if (location.protocol === "file:") document.write('<script src="press3d/offline-assets.js"><\/script><script src="press3d/member-photos.js"><\/script>');
 </script>
 <script src="press3d/app.js"></script>
 </body>
