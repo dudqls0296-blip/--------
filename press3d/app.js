@@ -268,7 +268,8 @@ coverObj.scale.setScalar(SHEET_W / 840);
 coverObj.rotation.x = -Math.PI / 2;
 coverObj.position.y = 0.0022;
 sheet.add(coverObj);
-coverEl.style.opacity = "0";
+coverEl.style.opacity = "0"; coverObj.visible = false;   // 표지 글자는 아래의 인쇄 버전(WebGL)만 사용 — HTML 3D 글자는 반짝임이 생김
+const cov = { h1a: 1, h1b: 1, rule: 1, sub: 1, foot: 1 };   // 인트로에서 글자가 나타나는 진행도
 // 같은 표지 글자를 종이에 직접 인쇄한 버전 (카메라가 움직이는 5장에서 HTML 글자가 반짝이지 않도록)
 function drawCoverPrint(ctx, w, h) {
   const k = w / 840; ctx.clearRect(0, 0, w, h); ctx.save(); ctx.scale(k, k);
@@ -278,20 +279,23 @@ function drawCoverPrint(ctx, w, h) {
   ctx.font = `500 15px ${MONO}`; ctx.fillStyle = "#5B4632"; ctx.letterSpacing = "2.7px"; ctx.textAlign = "right"; ctx.fillText(`${CFG.year} · VOL.01`, R + 2.7, 75); ctx.textAlign = "left";
   ctx.fillStyle = "#2B2017"; ctx.fillRect(L, 89, R - L, 1.5);
   ctx.font = `900 64px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "-1.6px";
-  ctx.fillText("우리가 함께한 순간들,", L, 213); ctx.fillText("한 권의 기록이 되다.", L, 294);
+  const reveal = (t, y, u) => { if (u <= 0) return; ctx.save(); ctx.beginPath(); ctx.rect(L - 4, y - 70, (R - L + 8) * Math.min(1, u), 90); ctx.clip(); ctx.fillText(t, L, y); ctx.restore(); };
+  reveal("우리가 함께한 순간들,", 213, cov.h1a); reveal("한 권의 기록이 되다.", 294, cov.h1b);
   ctx.letterSpacing = "0px";
-  ctx.fillStyle = "#6E2230"; ctx.fillRect(L, 344, 120, 2);
-  ctx.font = `400 19px ${SERIF}`; ctx.fillStyle = "#3A2C20";
-  ctx.fillText("학교의 순간을 기록하고, 사진과 이야기로 엮어", L, 396); ctx.fillText("하나의 잡지로 완성합니다.", L, 429);
-  ctx.font = `700 23px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "1.4px"; ctx.fillText("인덕대학교 총학생회 언론부", L, 538); ctx.letterSpacing = "0px";
-  ctx.save(); ctx.translate(R - 22, 518); ctx.rotate(-8 * Math.PI / 180); ctx.globalAlpha = 0.85;
+  ctx.fillStyle = "#6E2230"; ctx.fillRect(L, 344, 120 * cov.rule, 2);
+  ctx.globalAlpha = cov.sub; ctx.font = `400 19px ${SERIF}`; ctx.fillStyle = "#3A2C20";
+  const sy = 8 * (1 - cov.sub); ctx.fillText("학교의 순간을 기록하고, 사진과 이야기로 엮어", L, 396 + sy); ctx.fillText("하나의 잡지로 완성합니다.", L, 429 + sy);
+  ctx.globalAlpha = cov.foot; const fy = 8 * (1 - cov.foot);
+  ctx.font = `700 23px ${SERIF}`; ctx.fillStyle = "#16110C"; ctx.letterSpacing = "1.4px"; ctx.fillText("인덕대학교 총학생회 언론부", L, 538 + fy); ctx.letterSpacing = "0px";
+  ctx.save(); ctx.translate(R - 22, 518 + fy); ctx.rotate(-8 * Math.PI / 180); ctx.globalAlpha = 0.85;
   ctx.strokeStyle = "#6E2230"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 21, 0, Math.PI * 2); ctx.stroke();
   ctx.fillStyle = "#6E2230"; ctx.font = `700 22px ${SERIF}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("言", 0, 1);
-  ctx.restore(); ctx.restore();
+  ctx.restore(); ctx.globalAlpha = 1; ctx.restore();
 }
-const coverGLMat = new THREE.MeshStandardMaterial({ map: liveTex(2048, 1448, drawCoverPrint), transparent: true, opacity: 0, roughness: 0.9, depthWrite: false });
+const coverTex = liveTex(2048, 1448, drawCoverPrint);
+const coverGLMat = new THREE.MeshStandardMaterial({ map: coverTex, transparent: true, opacity: 0, roughness: 0.9, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -8 });   // 종이와 깊이가 겹쳐 깜빡이지 않게 앞으로 당김
 const coverGL = new THREE.Mesh(flatPlane(SHEET_W, SHEET_H), coverGLMat);
-coverGL.position.y = 0.0022; coverGL.receiveShadow = true; coverGL.renderOrder = 2; sheet.add(coverGL);
+coverGL.position.y = 0.003; coverGL.receiveShadow = true; coverGL.renderOrder = 2; sheet.add(coverGL);
 
 /* ---- 원고지 (400자, 20×20) ---- */
 const MS = { w: 1024, h: 1448, mx: 70, my: 110, cols: 20, rows: 20 };
@@ -321,7 +325,7 @@ function makePrint(src, seed, w = 0.15, h = 0.1, polaroid = false) {
   border.castShadow = border.receiveShadow = true;
   const tex = canvasTex(900, Math.round(900 * h / w), (ctx, cw, ch) => drawPhoto(ctx, src, 0, 0, cw, ch, seed));
   repaintList.push(tex);
-  const photo = new THREE.Mesh(flatPlane(w, h), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.32 }));
+  const photo = new THREE.Mesh(flatPlane(w, h), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.32, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4 }));
   photo.position.set(0, 0.0003, polaroid ? -0.009 : 0); photo.receiveShadow = true;
   g.add(border, photo);
   allPrints.push(g);
@@ -824,9 +828,7 @@ function snapTo(i, s = 0) {
   const away = i >= 5;
   placeAt(sheet, away ? SHEET_AWAY : SHEET_HOME);
   fold.r = fold.l = 1;
-  coverEl.style.opacity = away ? "0" : "1";
-  const sp = coverEl.querySelectorAll("h1 span"); gsap.set(sp, { clipPath: "inset(0 0% 0 0)" });
-  gsap.set(coverEl.querySelector(".rule"), { width: 120 }); gsap.set(coverEl.querySelectorAll(".sub,.foot"), { opacity: 1, y: 0 });
+  gsap.killTweensOf(cov); Object.assign(cov, { h1a: 1, h1b: 1, rule: 1, sub: 1, foot: 1 }); coverTex.repaint();
   // PAGE 02
   prints2.forEach((p) => placeAt(p, p.userData.home, i >= 1));
   foldB.t = i >= 1 ? 0 : 1; msB.visible = i >= 1;
@@ -883,20 +885,20 @@ function enter(i, s, forward) {
     return;
   }
   ({ 0: enterP1, 1: enterP2, 2: enterP3, 3: enterP4, 4: enterP5, 5: enterP6 })[i](s);
-  coverVisible(i);
+  if (i !== 0) coverVisible(i);   // 1장은 인트로가 직접 글자를 보여준다
 }
 // 표지 지면의 HTML 글자는 1·5장에서만 보이게 (다른 장면에서 본문과 겹치지 않도록)
-function coverVisible(i) {   // 5장: 종이에 인쇄된 버전(WebGL)으로 보여 카메라 이동 중에도 반짝이지 않게
-  if (i !== 0) coverEl.style.opacity = "0";
-  gsap.to(coverGLMat, { opacity: i === 4 ? 1 : 0, duration: i === 4 ? 0.8 : 0.5, overwrite: true });
+function coverVisible(i) {   // 표지 글자는 종이에 인쇄된 버전(WebGL) — 1·5장에서만 보임
+  const on = i === 0 || i === 4;
+  gsap.to(coverGLMat, { opacity: on ? 1 : 0, duration: on ? 0.8 : 0.5, overwrite: true });
 }
 
 /* PAGE 01 — 인트로 */
 const SHEET_END = SHOT.p1;
 function playIntro(replay) {
-  const h1 = coverEl.querySelectorAll("h1 span"), rule = coverEl.querySelector(".rule"), sub = coverEl.querySelector(".sub"), foot = coverEl.querySelector(".foot");
-  gsap.set(h1, { clipPath: "inset(0 100% 0 0)" }); gsap.set(rule, { width: 0 }); gsap.set([sub, foot], { opacity: 0, y: 8 });
-  coverEl.style.opacity = "0";
+  gsap.killTweensOf(cov); gsap.killTweensOf(coverGLMat);
+  Object.assign(cov, { h1a: 0, h1b: 0, rule: 0, sub: 0, foot: 0 }); coverTex.repaint(); coverGLMat.opacity = 0;
+  const rp = () => { coverTex.dirty = true; };   // 한 프레임에 한 번만 다시 그림
   fold.r = fold.l = 0;
   if (!replay) {
     rig.pos.set(0.42, 1.5, 1.7); rig.look.set(0.05, 0.02, -0.2); lookNow.copy(rig.look);
@@ -909,12 +911,12 @@ function playIntro(replay) {
   const T = replay ? 0.4 : 3.6 * D;
   tl.to(fold, { r: 1, duration: 1.15 * D, ease: "power3.inOut" }, T)
     .to(fold, { l: 1, duration: 1.15 * D, ease: "power3.inOut" }, T + 0.6 * D)
-    .add(() => { coverEl.style.opacity = "1"; }, T + 1.4 * D)
-    .to(h1[0], { clipPath: "inset(0 0% 0 0)", duration: 1.15 * D, ease: "power2.inOut" }, T + 1.5 * D)
-    .to(h1[1], { clipPath: "inset(0 0% 0 0)", duration: 1.15 * D, ease: "power2.inOut" }, T + 2.15 * D)
-    .to(rule, { width: 120, duration: 0.8 * D, ease: "power3.out" }, T + 2.95 * D)
-    .to(sub, { opacity: 1, y: 0, duration: 1 * D, ease: "power2.out" }, T + 3.1 * D)
-    .to(foot, { opacity: 1, y: 0, duration: 1 * D, ease: "power2.out" }, T + 3.4 * D)
+    .to(coverGLMat, { opacity: 1, duration: 0.5 * D, ease: "power1.out" }, T + 1.75 * D)   // 종이가 다 펼쳐진 뒤에 인쇄 면 표시
+    .to(cov, { h1a: 1, duration: 1.15 * D, ease: "power2.inOut", onUpdate: rp }, T + 1.85 * D)
+    .to(cov, { h1b: 1, duration: 1.15 * D, ease: "power2.inOut", onUpdate: rp }, T + 2.5 * D)
+    .to(cov, { rule: 1, duration: 0.8 * D, ease: "power3.out", onUpdate: rp }, T + 3.3 * D)
+    .to(cov, { sub: 1, duration: 1 * D, ease: "power2.out", onUpdate: rp }, T + 3.45 * D)
+    .to(cov, { foot: 1, duration: 1 * D, ease: "power2.out", onUpdate: rp }, T + 3.75 * D)
     .add(() => { document.getElementById("hudTop").classList.add("on"); document.getElementById("hudBottom").classList.add("on"); }, replay ? 0 : 6.2 * D);
 }
 function enterP1() { snapTo(0); playIntro(introDone); introDone = true; }
@@ -1017,7 +1019,7 @@ function enterP6() {
   tl.add(() => flipTo(0, 1.1 * D), 0.2);
   tl.to(sheet.position, { x: SHEET_AWAY.p.x, z: SHEET_AWAY.p.z, duration: 1.6 * D, ease: "power3.inOut" }, 0.3)
     .to(sheet.rotation, { y: SHEET_AWAY.ry, duration: 1.6 * D, ease: "power3.inOut" }, 0.3)
-    .add(() => { coverEl.style.opacity = "0"; }, 0.3)
+    .to(coverGLMat, { opacity: 0, duration: 0.5 }, 0.3)
     .to(book.position, { x: -LW / 2, z: 0.02, duration: 2.2 * D, ease: "power3.inOut" }, 1.4 * D)
     .to(book.position, { y: 0.06, duration: 1.1 * D, ease: "sine.out", yoyo: true, repeat: 1 }, 1.4 * D);
   allPrints.forEach((p, k) => {
@@ -1104,6 +1106,7 @@ addEventListener("pointermove", (e) => { pointer.x = e.clientX / innerWidth * 2 
 const clock = new THREE.Clock();
 const tmp = V(0, 0, 0);
 function frame() {
+  if (coverTex.dirty) { coverTex.dirty = false; coverTex.repaint(); }
   const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
   const flick = 0.98 + Math.sin(t * 1.7) * 0.012 + Math.sin(t * 2.9 + 1.2) * 0.008;   // 아주 느리고 약한 불꽃 흔들림
   lampLight.intensity = light.lamp * 0.9 * flick;
